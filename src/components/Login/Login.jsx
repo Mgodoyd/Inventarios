@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import {Form , Button, Image} from 'react-bootstrap';
-import { FaEnvelope,FaLock,FaGreaterThan } from "react-icons/fa";
-import Swal from 'sweetalert2'
+import { Form , Button, Image } from 'react-bootstrap';
+import { FaEnvelope, FaLock, FaGreaterThan } from "react-icons/fa";
+import Swal from 'sweetalert2';
 import './Login.css';
 
 const Login = () => {
   const [validated, setValidated] = useState(false);
-  const [formValues, setFormValues] = useState({ email: '', password: '' });
+  const [formValues, setFormValues] = useState({ email: '', password: '', isAdmin: false });
+  
+
+  
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -23,6 +27,7 @@ const Login = () => {
       } else {
         url = `http://localhost:8080/WebApplication1/web/Product/operador/${correo}/${contrasena}`;
       }
+
       fetch(url, {
         method: 'POST',
         headers: {
@@ -32,50 +37,45 @@ const Login = () => {
       })
       .then(response => {
         if (!response.ok) {
-          if (!formValues.isAdmin) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Invalid email or password',
-            });
-          } else if (formValues.isAdmin) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'No eres administrador',
-            });
-          } else if (formValues.isAdmin){ 
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Email o password incorrect',
-            });
-          }
+            if (!formValues.isAdmin) {
+                if (response.status === 401) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Email or Password incorrect',
+                    });
+                } 
+            } else if (formValues.isAdmin) {
+                if (response.status === 401) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'No eres administrador',
+                    });
+                } 
+            }
         }
         return response.json();
       })
       .then(data => {
-        // Aquí puedes hacer algo con los datos que recibes
         console.log(data);
       })
-      .catch(error => {
+      .catch(_error => {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
           text: 'Invalid email or password',
         });
       });
+
       setValidated(true);
     }
   };
-  
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
     const newValue = type === 'checkbox' ? checked : value;
     setFormValues({ ...formValues, [name]: newValue });
-  };
-       
-
+  };    
   return (
     <div style={{marginLeft:"25%", marginTop:"35%"}}>
       <div style={{ position: 'absolute', top: 15, right: -20 }}>
