@@ -5,7 +5,7 @@ import { AiFillInstagram } from "react-icons/ai";
 import { BsTwitter } from "react-icons/bs";
 import './Image.css';
 
-const Login = () => {
+const Images = () => {
   return(
 <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
   <Image src="./Images/fondo.jpg" style={{width:"100%", height:"100%", objectFit: "cover"}} />
@@ -59,4 +59,4 @@ const Login = () => {
   );
 }
 
-export default Login;
+export default Images;
