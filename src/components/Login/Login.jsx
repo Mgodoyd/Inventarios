@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Image } from 'react-bootstrap';
 import { FaEnvelope, FaLock, FaGreaterThan } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -7,18 +7,40 @@ import './Login.css';
 
 const Login = () => {
   const [validated, setValidated] = useState(false);
-  const [userRole] = useState(localStorage.getItem("user") || "admin"); // si no hay nada en el local storage, se toma el valor por defecto
   const [formValues, setFormValues] = useState({ email: "", password: "",});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-
-  const apiUrl = userRole === "operador" 
-  ? "http://localhost:8080/WebApplication1/web/Product/administrador"
-  : "http://localhost:8080/WebApplication1/web/Product/operador";
-
-
   const navigate = useNavigate();
-
+  const [isAdminUser, setIsAdminUser] = useState(false);
+  const [isOperadorUser, setIsOperadorUser] = useState(false);
+  
+  useEffect(() => {
+    const adminUser = "admin";
+    const operadorUser = "operador";
+    localStorage.setItem("user", adminUser);
+    localStorage.setItem("user2", operadorUser);
+  
+    const localUser = localStorage.getItem("user");
+    const localUser2 = localStorage.getItem("user2");
+  
+    setIsAdminUser(localUser === adminUser);
+    setIsOperadorUser(localUser2 === operadorUser);
+  }, []);
+  
+  const [apiUrl, setApiUrl] = useState("");
+  const [apiUrl2, setApiUrl2] = useState("");
+  
+  useEffect(() => {
+    if (isOperadorUser) {
+      setApiUrl("http://localhost:8080/WebApplication1/web/Product/operador");
+    }
+  }, [isOperadorUser]);
+  
+  useEffect(() => {
+    if (isAdminUser) {
+      setApiUrl2("http://localhost:8080/WebApplication1/web/Product/administrador");
+    } 
+  }, [isAdminUser]);
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -31,11 +53,19 @@ const Login = () => {
 
     setIsSubmitting(true);
 
+    
     const { email, password } = formValues;
-    const urlWithCredentials = `${apiUrl}/${email}/${password}`;
-
-    const body = JSON.stringify({ email, password, isAdmin: formValues.isAdmin, });
+    let urlWithCredentials;
   
+    if (isOperadorUser) {
+      urlWithCredentials = `${apiUrl}/${email}/${password}`;
+    } else if (isAdminUser) {
+      urlWithCredentials = `${apiUrl2}/${email}/${password}`;
+    } else {
+      throw new Error("El usuario almacenado localmente no es válido");
+    }
+    const body = JSON.stringify({ email, password });
+
     try {
       const response = await fetch(urlWithCredentials, {
         method: "POST",
@@ -44,9 +74,9 @@ const Login = () => {
         },
         body: body,
       });
-  
- 
+
       console.log(response);
+
 
       if (!response.ok) {
         throw new Error('Incorrect Email o Password');
