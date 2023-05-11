@@ -13,6 +13,7 @@ const Operador = () => {
     localStorage.removeItem('user');
     navigate('/');
   }
+
   return (
     <>
       <Navbar bg="primary" variant="dark">

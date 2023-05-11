@@ -10,6 +10,7 @@ const Administrador = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('user');
+ //   localStorage.setItem('user');
     navigate('/');
   }
 

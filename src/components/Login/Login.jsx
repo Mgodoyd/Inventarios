@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Form, Button, Image } from 'react-bootstrap';
 import { FaEnvelope, FaLock, FaGreaterThan } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -10,73 +10,41 @@ const Login = () => {
   const [formValues, setFormValues] = useState({ email: "", password: "",});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  const [isAdminUser, setIsAdminUser] = useState(false);
-  const [isOperadorUser, setIsOperadorUser] = useState(false);
-  
-  useEffect(() => {
-    const adminUser = "admin";
-    const operadorUser = "operador";
-    localStorage.setItem("user", adminUser);
-    localStorage.setItem("user2", operadorUser);
-  
-    const localUser = localStorage.getItem("user");
-    const localUser2 = localStorage.getItem("user2");
-  
-    setIsAdminUser(localUser === adminUser);
-    setIsOperadorUser(localUser2 === operadorUser);
-  }, []);
-  
-  const [apiUrl, setApiUrl] = useState("");
-  const [apiUrl2, setApiUrl2] = useState("");
-  
-  useEffect(() => {
-    if (isOperadorUser) {
-      setApiUrl("http://localhost:8080/WebApplication1/web/Product/operador");
-    }
-  }, [isOperadorUser]);
-  
-  useEffect(() => {
-    if (isAdminUser) {
-      setApiUrl2("http://localhost:8080/WebApplication1/web/Product/administrador");
-    } 
-  }, [isAdminUser]);
-  
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const form = event.currentTarget;
 
-    if (form.checkValidity() === false) {
-      event.stopPropagation();
-      setValidated(true);
-      return;
-    }
 
-    setIsSubmitting(true);
+  
 
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
     
-    const { email, password } = formValues;
-    let urlWithCredentials;
-  
-    if (isOperadorUser) {
-      urlWithCredentials = `${apiUrl}/${email}/${password}`;
-    } else if (isAdminUser) {
-      urlWithCredentials = `${apiUrl2}/${email}/${password}`;
-    } else {
-      throw new Error("El usuario almacenado localmente no es válido");
-    }
-    const body = JSON.stringify({ email, password });
+      if (form.checkValidity() === false) {
+        event.stopPropagation();
+        setValidated(true);
+        return;
+      }
+    
+      setIsSubmitting(true);
+      const { email, password } = formValues;
 
-    try {
-      const response = await fetch(urlWithCredentials, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: body,
-      });
-
-      console.log(response);
-
+      const apiUrl = `https://anlisis-sistemasi.azure-api.net/analisis-sistemas/loginAdministrador?correo=${email}&password=${password}`;
+      
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          body: JSON.stringify({
+            correo: email,
+            password: password
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            "Content-Encoding": "gzip",
+            "Transfer-Encoding": "chunked",
+            "Vary": "Accept-Encoding"
+          }
+        });
+      
+        console.log(response);
 
       if (!response.ok) {
         throw new Error('Incorrect Email o Password');
@@ -100,16 +68,16 @@ const Login = () => {
       }
 
       const data = await response.json(); // convierte la respuesta en formato JSON
-      const rol_usuario = data.id_usuario; // extrae el valor del rol_id del cuerpo de la respuesta
+      const rol_usuario = data.rol; // extrae el valor del rol_id del cuerpo de la respuesta
       console.log(data.id_usuario);
 
       if (rol_usuario === 2) {
         console.log(JSON.stringify({ message: 'Bienvenido Administrador' }));
-       localStorage.setItem("user", "admin");
+      // localStorage.setItem("user", "admin");
        navigate('/admin');
       } else if (rol_usuario === 1){
         console.log(JSON.stringify({ message: 'Bienvenido Operador' }));
-        localStorage.setItem("user", "operador");
+      //  localStorage.setItem("user", "operador");
         navigate('/operador');
       }
     } catch (error) {
@@ -185,6 +153,6 @@ const Login = () => {
       </Form>
     </div>
   );
-};
+        }
 
 export default Login;
