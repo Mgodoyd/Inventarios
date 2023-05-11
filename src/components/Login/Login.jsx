@@ -6,101 +6,104 @@ import Swal from 'sweetalert2';
 import './Login.css';
 
 const Login = () => {
-  const [validated, setValidated] = useState(false);
-  const [formValues, setFormValues] = useState({ email: "", password: "",});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
-
+      // useState para controlar la validación del formulario
+      const [validated, setValidated] = useState(false);
+      // useState para almacenar los valores de los campos del formulario
+      const [formValues, setFormValues] = useState({ email: "", password: "",});
+      // useState para controlar el estado de envío del formulario
+      const [isSubmitting, setIsSubmitting] = useState(false);
+      // hook de React Router DOM para navegar a diferentes rutas
+      const navigate = useNavigate();
 
   
 
-    const handleSubmit = async (event) => {
-      event.preventDefault();
-      const form = event.currentTarget;
-    
-      if (form.checkValidity() === false) {
-        event.stopPropagation();
-        setValidated(true);
-        return;
-      }
-    
-      setIsSubmitting(true);
-      const { email, password } = formValues;
+          // Función que se ejecuta cuando se envía el formulario
+          const handleSubmit = async (event) => {
+            event.preventDefault(); // previene el comportamiento por defecto del formulario
+            const form = event.currentTarget; // obtiene el formulario
+            
+            // Si el formulario no es válido, muestra los errores y detiene la función
+            if (form.checkValidity() === false) {
+              event.stopPropagation();
+              setValidated(true);
+              return;
+            }
+          
+            // El formulario es válido, se establece que se está enviando
+          setIsSubmitting(true);
 
-      const apiUrl = `https://anlisis-sistemasi.azure-api.net/analisis-sistemas/loginAdministrador?correo=${email}&password=${password}`;
-      
-      try {
-        const response = await fetch(apiUrl, {
-          method: "POST",
-          body: JSON.stringify({
-            correo: email,
-            password: password
-          }),
-          headers: {
-            "Content-Type": "application/json",
-            "Content-Encoding": "gzip",
-            "Transfer-Encoding": "chunked",
-            "Vary": "Accept-Encoding"
+          const { email, password } = formValues;
+
+          const apiUrl = `https://analisis-sistemas.azurewebsites.net/api/loginadministrador?correo=${email}&password=${password}`;
+
+
+          const formData = { correo: {email}, password: {password} };
+          try {
+             // Envía una petición POST al servidor con los datos del formulario
+            const response = await fetch(apiUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(formData)
+            });
+            
+            const data = await response.json(); // Obtiene la respuesta en formato JSON
+            const rol_usuario = data.rol; // Obtiene el rol del usuario de la respuesta
+            
+            // Si la respuesta no es ok, lanza un error
+          if (!response.ok) {
+            throw new Error('Incorrect Email o Password');
+          }else{
+             // Muestra un toast de bienvenida con el rol del usuario
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              }
+            })
+            
+            Toast.fire({
+              icon: 'success',
+              title: `Bienvenido ${rol_usuario}`
+            })
           }
+
+            // Si el rol del usuario es administrador, establece el valor del localStorage y navega a la ruta de admin
+          if (rol_usuario === "ADMINISTRADOR") {
+            console.log(JSON.stringify({ message: 'Bienvenido Administrador' }));
+          localStorage.setItem("user", "admin");
+          navigate('/admin');
+           // Si el rol del usuario es operador, establece el valor del localStorage y navega a la ruta de operador
+          } else if (rol_usuario === "OPERADOR"){
+            console.log(JSON.stringify({ message: 'Bienvenido Operador' }));
+          localStorage.setItem("user", "operador");
+            navigate('/operador');
+          }
+        } catch (error) {
+          handleError(error);
+     } finally {
+          setIsSubmitting(false);
+          setValidated(true);
+        }
+      };
+
+      const handleError = (error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: error.message,
         });
-      
-        console.log(response);
+      };
 
-      if (!response.ok) {
-        throw new Error('Incorrect Email o Password');
-      }else{
-        const Toast = Swal.mixin({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-          didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-          }
-        })
-        
-        Toast.fire({
-          icon: 'success',
-          title: `Bienvenido`
-        })
-      }
-
-      const data = await response.json(); // convierte la respuesta en formato JSON
-      const rol_usuario = data.rol; // extrae el valor del rol_id del cuerpo de la respuesta
-      console.log(data.id_usuario);
-
-      if (rol_usuario === 2) {
-        console.log(JSON.stringify({ message: 'Bienvenido Administrador' }));
-      // localStorage.setItem("user", "admin");
-       navigate('/admin');
-      } else if (rol_usuario === 1){
-        console.log(JSON.stringify({ message: 'Bienvenido Operador' }));
-      //  localStorage.setItem("user", "operador");
-        navigate('/operador');
-      }
-    } catch (error) {
-      handleError(error);
-    } finally {
-
-      setIsSubmitting(false);
-      setValidated(true);
-    }
-  };
-
-  const handleError = (error) => {
-    Swal.fire({
-      icon: 'error',
-      title: 'Oops...',
-      text: error.message,
-    });
-  };
-
-
-  const handleChange = ({ target: { name, value } }) => {
-    setFormValues({ ...formValues, [name]: value });
-  };
+      const handleChange = ({ target: { name, value } }) => {
+        setFormValues({ ...formValues, [name]: value });
+      };
 
 
   return (
@@ -153,6 +156,6 @@ const Login = () => {
       </Form>
     </div>
   );
-        }
+}
 
 export default Login;
