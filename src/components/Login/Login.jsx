@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Button, Image } from 'react-bootstrap';
-import { FaEnvelope, FaLock, FaGreaterThan } from 'react-icons/fa';
+import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './Login.css';
@@ -149,7 +149,7 @@ const Login = () => {
         <Button className="submit-button" variant="primary" type="submit" disabled={isSubmitting}>
         {isSubmitting ? 'Loading...' : (
             <>
-              Login <FaGreaterThan />
+              Login 
             </>
           )}
         </Button>

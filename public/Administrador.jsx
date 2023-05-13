@@ -7,25 +7,12 @@ import './css/style.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import { faLaughWink } from '@fortawesome/free-solid-svg-icons';
-import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
-import { faTable } from '@fortawesome/free-solid-svg-icons';
-import { faCircleDot } from '@fortawesome/free-solid-svg-icons';
-
 
 
 
 const Administrador = () => {
   const [showLogout, setShowLogout] = useState(false);
   const navigate = useNavigate();
-
-  const handleToggleSidebar = () => {
-    const sidebar = document.querySelector(".mySidebar");
-    sidebar.classList.toggle("toggled");
-  };
-
-  const tablespage = () => {
-    navigate('tables');
-  };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -35,52 +22,48 @@ const Administrador = () => {
   const handleDropdown = () => {
     setShowLogout(!showLogout);
   }
- 
-  const pageinicio = () => {
-    navigate('/admin');
-    };
- 
 
   return (
-    <>
+    
+     <>
+     
+
       <div id="wrapper">
-        <ul className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion mySidebar">
-          <a className="sidebar-brand d-flex align-items-center justify-content-center" href="/">
-            <div className="sidebar-brand-icon rotate-n-15">
-              <FontAwesomeIcon icon={ faLaughWink } size="2x" style={{color: "#ffffff",}} />
-            </div>
-            <div className="sidebar-brand-text mx-3">Inventario - SCRUM <sup>2</sup></div>
-          </a>
+  <ul className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <a className="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+      <div className="sidebar-brand-icon rotate-n-15">
+        <FontAwesomeIcon icon={ faLaughWink } size="2x" style={{color: "#ffffff",}} />
+      </div>
+      <div className="sidebar-brand-text mx-3">Inventario - SCRUM <sup>2</sup></div>
+    </a>
 
-          <hr className="sidebar-divider my-0" />
+    <hr className="sidebar-divider my-0" />
 
-          <li className="nav-item active">
-            <a className="nav-link" href=" " onClick={pageinicio}>
-              <FontAwesomeIcon icon={faTachometerAlt} style={{color: "#ffffff",}} />
-              <span style={{marginLeft:"10px"}}>Pantalla de inicio</span>
-            </a>
-          </li>
+    <li className="nav-item active">
+      <a className="nav-link" href="/">
+        <FontAwesomeIcon icon={faAlternateTachometer} size="sm" style={{color: "#ffffff",}} />
+        <span>Pantalla de inicio</span>
+      </a>
+    </li>
 
-          <hr className="sidebar-divider" />
+    <hr className="sidebar-divider" />
 
-          <div className="sidebar-heading">
-            Existencia:
-          </div>
+    <div className="sidebar-heading">
+      Existencia:
+    </div>
 
-          <li className="nav-item">
-            <a className="nav-link" href=" " onClick={tablespage}>
-              <FontAwesomeIcon icon={faTable} style={{color: "#ffffff",}} />
-              <span style={{marginLeft:"10px"}}>Listado de productos</span>
-            </a>
-          </li>
+    <li className="nav-item">
+      <a className="nav-link" href="/tables">
+        <i className="fas fa-fw fa-table"></i>
+        <span>Listado de productos</span>
+      </a>
+    </li>
 
-          <hr className="sidebar-divider d-none d-md-block"></hr>
+    <hr className="sidebar-divider d-none d-md-block"></hr>
 
-          <div className="text-center d-none d-md-inline">
-            <button className="rounded-circle border-0" id="sidebarToggle" onClick={handleToggleSidebar}>
-            <FontAwesomeIcon icon={faCircleDot} size ="2x" style={{color: "#ffffff",marginTop: "2px",marginLeft:"-1.5px"}} />
-            </button>
-          </div>
+    <div className="text-center d-none d-md-inline">
+      <button className="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
   </ul>
 
   <div id="content-wrapper" className="d-flex flex-column">
@@ -230,11 +213,33 @@ const Administrador = () => {
       <footer className="sticky-footer bg-white">
         <div className="container my-auto">
           <div className="copyright text-center my-auto">
-            <span>Derechos Reservados © Mgodoyd 2023</span>
+            <span>Derechos Reservados © Tu sitio web 2023</span>
           </div>
         </div>
       </footer>
     </div>
+
+    <div className="modal fade" id="logoutModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div className="modal-dialog" role="document">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title" id="exampleModalLabel">¿Desea abandonar la sesión actual?</h5>
+            <button className="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div className="modal-body">Seleccione cerrar sesión para salir de su cuenta.</div>
+          <div className="modal-footer">
+            <button className="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+            <a className="btn btn-primary" href="/login">Cerrar sesión</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <a className="scroll-to-top rounded" href="#page-top">
+      <i className="fas fa-angle-up"></i>
+    </a>
   </div>
 </div>
     </>
