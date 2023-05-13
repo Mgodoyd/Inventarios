@@ -243,7 +243,9 @@ const Operador = () => {
                   <div className="cards_total">
                       {filteredProducts.map(product => (
                         <div className="cards" key={product.id}>
+                          <div className="imagen">
                           <img  src={product.img} alt={product.nombbre} />
+                          </div>
                           <h2>Producto : {product.nombbre}</h2>
                           <p>Precio : Q {product.precio}.00</p>
                           <p>Stock Disponible : {product.stock}</p>
@@ -253,7 +255,9 @@ const Operador = () => {
                       ))}
                       {filteredProducts2.map(products2 => (
                         <div className="cards" key={products2.id}>
+                           <div className="imagen">
                           <img src={products2.img} alt={products2.nombre} />
+                          </div>
                           <h2>Producto : {products2.nombre}</h2>
                           <p>Precio : Q {products2.precio}.00</p>
                           <p>Stock Disponible : {products2.stock}</p>
