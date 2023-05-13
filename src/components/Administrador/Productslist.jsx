@@ -16,6 +16,7 @@ import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import {faTrash} from '@fortawesome/free-solid-svg-icons';
 import { useEffect } from 'react';
 import Swal from 'sweetalert2';
+import { faPlus  } from '@fortawesome/free-solid-svg-icons';
 
 const Productslist = () => {
     const [showLogout, setShowLogout] = useState(false);
@@ -348,6 +349,261 @@ const Productslist = () => {
         console.error(error);
       }
     }
+     
+    const MovimientoStockJt = async (id) => {
+      try {
+        const data1 = await getProductoJt(id);
+
+        console.log(data1);
+
+        if (!data1) {
+          console.log('La respuesta es undefined o null');
+          return;
+        }
+
+        const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/jtdel/${id}`, {
+          method: 'DELETE',
+        });
+
+        Swal.fire({
+          title: '¡Éxito!',
+          text: 'Movimiento de Stock correctamente.',
+          icon: 'success'
+        });
+       window.location.reload(); 
+        console.log(response);
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          title: 'error!',
+          text: 'No se pudo realizar el movimiento de stock.',
+          icon: 'error'
+        });
+        
+      }
+
+    }
+ 
+    const MovimientoStock = async (id) => {
+      try {
+        const data1 = await getProductoGT(id);
+
+        console.log(data1);
+
+        if (!data1) {
+          console.log('La respuesta es undefined o null');
+          return;
+        }
+
+        const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/gtdel/${id}`, {
+          method: 'DELETE',
+        });
+
+        Swal.fire({
+          title: '¡Éxito!',
+          text: 'Movimiento de Stock correctamente.',
+          icon: 'success'
+        });
+       window.location.reload();
+       console.log(response);
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          title: 'error!',
+          text: 'No se pudo realizar el movimiento de stock.',
+          icon: 'error'
+        });
+        
+      }
+
+    }
+
+    const insertProducts = async () => {
+      try {
+       
+        const nombre = " ";
+        const precio = 0;
+        const stock = 0;
+        const stock_minimo = 0;
+        const img = " ";
+
+        const { value: formValues } = await Swal.fire({
+          title: 'Insertar Producto',
+          html:
+          `<h3>Producto</h3>
+          <input id="swal-input1" class="swal2-input" value="${nombre}" required>
+          <h3>Precio</h3>
+          <input id="swal-input2" class="swal2-input" value="${precio}" required>
+          <h3>Stock</h3>
+          <input id="swal-input3" class="swal2-input" value="${stock}" required>
+          <h3>Stock Minimo</h3>
+          <input id="swal-input4" class="swal2-input" value="${stock_minimo}" required>
+          <h3>Imagen</h3>
+          <input id="swal-input5" type="file" accept="image/*" value="${img}">
+          <h2>Insertar en...?</h2>
+          <input id="swal-input6" type="checkbox" name="tipo" value="gt">
+          <label for="swal-input6">GT</label>
+
+          <input id="swal-input7" type="checkbox" name="tipo" value="jt">
+          <label for="swal-input7">JT</label>`,
+          didOpen: () => {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach((checkbox) => {
+              checkbox.addEventListener('change', () => {
+                const checkedCount = document.querySelectorAll('input[type="checkbox"]:checked').length;
+                if (checkedCount > 1) {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Solo puedes seleccionar una ubicación',
+                  });
+                  checkbox.checked = false;
+                }
+              });
+            });
+          },
+          focusConfirm: false,
+          showCancelButton: true,
+          confirmButtonText: 'Guardar',
+          cancelButtonText: 'Cancelar',
+          confirmButtonClass: 'my-confirm-button-class',
+          cancelButtonClass: 'my-cancel-button-class',
+          buttonsStyling: false,
+          preConfirm: async () => {
+            const reader = new FileReader();
+            const file = document.getElementById('swal-input5').files[0];
+            reader.readAsDataURL(file);
+            // Devuelve una promesa que resuelve con el resultado una vez que la imagen se ha cargado
+            return new Promise((resolve, reject) => {
+              reader.onload = () => {
+                const base64Image = reader.result.split(',')[1];
+                const input1 = document.getElementById('swal-input1');
+                const input2 = document.getElementById('swal-input2');
+                const input3 = document.getElementById('swal-input3');
+                const input4 = document.getElementById('swal-input4');
+                const checkbox1 = document.getElementById('swal-input6');
+                const checkbox2 = document.getElementById('swal-input7');
+                if (!input4.value || (!checkbox1.checked && !checkbox2.checked)) {
+                  Swal.showValidationMessage('Llena todos los campos son requeridos!', {
+                    timer: 3000 // Tiempo en milisegundos (3 segundos en este caso)
+                  });
+                  reject();
+                
+                } else {
+                  resolve([
+                    input1.value,
+                    input2.value,
+                    input3.value,
+                    input4.value,
+                    base64Image,
+                    checkbox1.checked,
+                    checkbox2.checked
+                  ]);
+                }
+              }
+              reader.onerror = () => {
+                reader.abort();
+                reject(new Error('Error al cargar la imagen'));
+              };
+            });
+          },
+        });
+        
+        if (formValues) {
+          if (document.getElementById('swal-input6').checked) {
+            const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/insert/gt`, {
+              method: 'POST',
+              body: JSON.stringify({
+                "NOMBRE": formValues[0],
+                "PRECIO": formValues[1],
+                "IMG": formValues[4],
+                "STOCK": formValues[2],
+                "STOCK_MINIMO": formValues[3]
+              }),
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+        
+            console.log(response);
+        
+            if (response.ok) {
+              Swal.fire({
+                title: '¡Éxito!',
+                text: 'El producto ha sido insertado correctamente.',
+                icon: 'success'
+              });
+        
+              window.location.reload();
+            } else {
+              const errorData = await response.json();
+              // Aquí puedes hacer algo con el objeto `errorData` que contiene información detallada sobre el error
+              console.error('Error:', errorData);
+        
+              Swal.fire({
+                title: '¡Error!',
+                text: 'No se pudo insertar el producto.',
+                icon: 'error'
+              });
+            }
+          }
+        
+          if (document.getElementById('swal-input7').checked) {
+            const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/insert/jt`, {
+              method: 'POST',
+              body: JSON.stringify({
+                "NOMBRE": formValues[0],
+                "PRECIO": formValues[1],
+                "IMG": formValues[4],
+                "STOCK": formValues[2],
+                "STOCK_MINIMO": formValues[3]
+              }),
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+        
+            console.log(response);
+        
+            if (response.ok) {
+              Swal.fire({
+                title: '¡Éxito!',
+                text: 'El producto ha sido insertado correctamente.',
+                icon: 'success'
+              });
+              
+        
+              window.location.reload();
+            } else {
+              const errorData = await response.json();
+              // Aquí puedes hacer algo con el objeto `errorData` que contiene información detallada sobre el error
+              console.error('Error:', errorData);
+        
+              Swal.fire({
+                title: '¡Error!',
+                text: 'No se pudo insertar el producto.',
+                icon: 'error'
+              });
+
+              if (response.status === 409) {
+                Swal.fire({
+                  title: '¡Error!',
+                  text: 'Producto ya existente.',
+                  icon: 'error'
+                });
+              }
+            }
+          }
+        }
+        
+
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+
+
     
     const handleToggleSidebar = () => {
       const sidebar = document.querySelector(".mySidebar");
@@ -458,9 +714,9 @@ const Productslist = () => {
                 <div className="card shadow mb-4">
                   <div className="card-header py-3">
                       <span className='titletable'>Listado de productos:</span> 
-                      <button className='buttoninsert'>
-                      <FontAwesomeIcon icon={faUpload} style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff","margin-top": "2px","margin-left": "3px"}} />
-                      Ingresar Producto
+                      <button className='buttoninsert' onClick={insertProducts}>
+                        <FontAwesomeIcon icon={faUpload} style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff","margin-top": "2px","margin-left": "3px"}} />
+                        Ingresar Producto
                       </button>
                  <Form>
                     <Form.Group  id="form-search" className="mb-3" controlId="formBasicEmail">
@@ -500,6 +756,10 @@ const Productslist = () => {
                                             <FontAwesomeIcon icon={faTrash} style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
                                             Eliminar
                                         </button>
+                                        <button className='buttonstock' onClick={() => MovimientoStock(product.id_producto)}>
+                                            <FontAwesomeIcon icon={faPlus} style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
+                                            Stock
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -521,6 +781,10 @@ const Productslist = () => {
                                         <button className='buttoneliminar'  onClick={() => eliminarProductoJT(products2.id_producto)}>
                                             <FontAwesomeIcon icon={faTrash} style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
                                             Eliminar
+                                        </button>
+                                        <button className='buttonstock' onClick={() => MovimientoStockJt(products2.id_producto)}>
+                                            <FontAwesomeIcon icon={faPlus} style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
+                                            Stock
                                         </button>
                                     </td>
                                 </tr>

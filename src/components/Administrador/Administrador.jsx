@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState , useEffect,useRef} from 'react';
 import '../Administrador/css/sb-admin-2.min.css';
 import './img/undraw_profile_2.png';
 import './css/style.css';
@@ -10,18 +10,86 @@ import { faLaughWink } from '@fortawesome/free-solid-svg-icons';
 import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faTable } from '@fortawesome/free-solid-svg-icons';
 import { faCircleDot } from '@fortawesome/free-solid-svg-icons';
+import Chart from "chart.js/auto";
+
+
+
 
 
 
 
 const Administrador = () => {
   const [showLogout, setShowLogout] = useState(false);
+  const [stockGt, setStockGt] = useState(0);
+  const [stockJt, setStockJt] = useState(0);
+  const [stocktotal, setStocktotal] = useState(0);
+  const canvasRef = useRef(null);
   const navigate = useNavigate();
 
   const handleToggleSidebar = () => {
     const sidebar = document.querySelector(".mySidebar");
     sidebar.classList.toggle("toggled");
   };
+ 
+  useEffect(() => {
+    const fetchStockGt = async () => {
+      try {
+        const response = await fetch('https://analisis-sistemas.azurewebsites.net/api/stocktotalgt', {
+          method: 'GET',
+        });
+        const text = await response.text();
+        console.log(text);
+        const data = JSON.parse(text);
+        setStockGt(data.total);
+        
+      } catch (error) {
+        console.error(error);
+        
+      }
+    };
+  
+    fetchStockGt();
+  }, []);
+
+  useEffect(() => {
+    const fetchStockJt = async () => {
+      try {
+        const response = await fetch('https://analisis-sistemas.azurewebsites.net/api/stocktotaljt', {
+          method: 'GET',
+        });
+        const text = await response.text();
+        console.log(text);
+        const data = JSON.parse(text);
+        setStockJt(data.total);
+        
+      } catch (error) {
+        console.error(error);
+        
+      }
+    };
+  
+    fetchStockJt();
+  }, []);
+  
+  useEffect(() => {
+    const fetchStocktotal = async () => {
+      try {
+        const response = await fetch('https://analisis-sistemas.azurewebsites.net/api/totalstock2dbs', {
+          method: 'GET',
+        });
+        const text = await response.text();
+        console.log(text);
+        const data = JSON.parse(text);
+        setStocktotal(data.total);
+        
+      } catch (error) {
+        console.error(error);
+        
+      }
+    };
+  
+    fetchStocktotal();
+  }, []);
 
   const tablespage = () => {
     navigate('tables');
@@ -39,7 +107,92 @@ const Administrador = () => {
   const pageinicio = () => {
     navigate('/admin');
     };
- 
+
+  
+   
+
+    useEffect(() => {
+      const chartInstance = new Chart(canvasRef.current, {
+        type: "pie",
+        data: {
+          labels: ["Guatemala", "Jutiapa"],
+          datasets: [
+            {
+              data: [stockGt, stockJt],
+              backgroundColor: ["#FF6384", "#36A2EB"],
+            },
+          ],
+        },
+      });
+    
+      return () => {
+        chartInstance.destroy();
+      };
+    }, [stockGt, stockJt]);
+    
+   
+   
+    const FrecuencyPolygonChart = ({ data }) => {
+      const canvasRef = useRef(null);
+      
+    
+      useEffect(() => {
+        const chartConfig = {
+          type: 'line',
+          data: {
+            labels: data.labels,
+            datasets: [{
+              data: data.values,
+              fill: true,
+              borderColor: 'red',
+              tension: 0.4
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                display: false
+              }
+            }
+          }
+        };
+    
+        const chartInstance = new Chart(canvasRef.current, chartConfig);
+    
+        return () => {
+          chartInstance.destroy();
+        };
+      }, [data]);
+    
+      return <canvas ref={canvasRef} />;
+    };
+
+
+    useEffect(() => {
+      const fetchmovimientostotalgt = async () => {
+        try {
+          const response = await fetch('https://analisis-sistemas.azurewebsites.net/api/movimientosgt', {
+            method: 'GET',
+          });
+          const text = await response.text();
+          console.log(text);
+         /* const data = JSON.parse(text);
+          setStocktotal(data.total);*/
+          
+        } catch (error) {
+          console.error(error);
+          
+        }
+      };
+    
+      fetchmovimientostotalgt();
+    }, []);
+    
+  /*  const actualizarMovimientos = (movimiento) => {
+      setMovimientos([...movimientos, movimiento]);
+    };*/
+    
 
   return (
     <>
@@ -137,19 +290,17 @@ const Administrador = () => {
               <div className="card-body">
                 <div className="row no-gutters align-items-center">
                   <div className="col mr-2">
-                    <div className="text-xs font-weight-bold text-info text-uppercase mb-1">Cantidad de producto bodega Guatemala
-                    </div>
-                    <div className="h5 mb-0 font-weight-bold text-gray-800">
-                      2,000
-                    </div>
+                    <div className="text-xs font-weight-bold text-info text-uppercase mb-1">Cantidad de producto bodega Guatemala</div>
+                    <div className="h5 mb-0 font-weight-bold text-gray-800">{stockGt}</div>
                   </div>
                   <div className="col-auto">
-                   <FontAwesomeIcon icon={faCalendar} size="2x" style={{color: "#bababa",}} />
+                    <FontAwesomeIcon icon={faCalendar} size="2x" style={{color: "#bababa",}} />
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        
 
           <div className="col-xl-4 col-md-6 mb-4">
             <div className="card border-left-primary shadow h-100 py-2">
@@ -159,7 +310,7 @@ const Administrador = () => {
                     <div className="text-xs font-weight-bold text-info text-uppercase mb-1">Cantidad de producto bodega Jutiapa
                     </div>
                     <div className="h5 mb-0 font-weight-bold text-gray-800">
-                      1,000
+                      {stockJt}
                     </div>
                   </div>
                   <div className="col-auto">
@@ -178,7 +329,7 @@ const Administrador = () => {
                     <div className="text-xs font-weight-bold text-info text-uppercase mb-1">Total de existencias
                     </div>
                     <div className="h5 mb-0 font-weight-bold text-gray-800">
-                      3,000
+                      {stocktotal}
                     </div>
                   </div>
                   <div className="col-auto">
@@ -188,42 +339,20 @@ const Administrador = () => {
               </div>
             </div>
           </div>
-
-          <div className="card shadow mb-4">
-            <div className="card-header py-3">
-              <h6 className="m-0 font-weight-bold text-primary">Productos por marca:</h6>
-            </div>
-            <div className="card-body">
-              <h4 className="small font-weight-bold"> <span className="float-right"></span></h4>
-              <div className="progress mb-4">
-                <div className="progress-bar bg-danger" role="progressbar" style={{width: "20%"}} aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-              <h4 className="small font-weight-bold"> <span className="float-right"></span></h4>
-              <div className="progress mb-4">
-                <div className="progress-bar bg-warning" role="progressbar" style={{width: "40%"}} aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-              <h4 className="small font-weight-bold"> <span className="float-right"></span></h4>
-              <div className="progress mb-4">
-                <div className="progress-bar" role="progressbar" style={{width: "60%"}} aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-              <h4 className="small font-weight-bold"> <span className="float-right"></span></h4>
-              <div className="progress mb-4">
-                <div className="progress-bar bg-info" role="progressbar" style={{width: "80%"}} aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-              <h4 className="small font-weight-bold"> <span className="float-right"></span></h4>
-              <div className="progress">
-                <div className="progress-bar bg-success" role="progressbar" style={{width: "100%"}} aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-            </div>
+           
+          <div style={{ width: '25%', height: '50%',marginLeft:"75%"}}>
+            <canvas ref={canvasRef} />
           </div>
+          <div style={{ width: '77%', height: '50%',marginTop:"-22%"}}>
+          <FrecuencyPolygonChart 
+                data={{
+                  labels: ['M', 'O', 'V', 'I', 'M','I','E','N','T','O','S'],
+                  values: [10, 8, 15, 25, 30, 40, 28, 50, 60, 50, 9]
+                }}/>
+           </div>
 
-          <div className="row">
-            <div className="card-body">
-              <div className="chart-area">
-                <canvas id="myAreaChart" alt=""></canvas>
-              </div>
-            </div>
-          </div>
+         
+
         </div>
       </div>
 

@@ -112,6 +112,17 @@
     border-radius: 4px;
     padding: 8px 16px;
   }
+  .buttonstock{
+    background-color: #5672d8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.5s;
+    padding: 8px;
+    margin-left: 10%;
+    display: inline-block;
+  }
   
  
  
