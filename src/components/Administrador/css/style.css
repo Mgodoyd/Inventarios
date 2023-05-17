@@ -123,6 +123,32 @@
     margin-left: 10%;
     display: inline-block;
   }
-  
- 
+  .buttonreporte{
+    background-color: #5672d8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.5s;
+    padding: 10px;
+    margin-left: 50%;
+    display: inline-block;
+    margin-bottom: 15px;
+    margin-top: -95px;
+    position: absolute;
+  }
+  .buttonreportejt{
+    background-color: #5672d8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.5s;
+    padding: 10px;
+    margin-left: 60%;
+    display: inline-block;
+    margin-bottom: 15px;
+    margin-top: -95px;
+    position: absolute;
+  }
  

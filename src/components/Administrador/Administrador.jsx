@@ -11,6 +11,7 @@ import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faTable } from '@fortawesome/free-solid-svg-icons';
 import { faCircleDot } from '@fortawesome/free-solid-svg-icons';
 import Chart from "chart.js/auto";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 
 
@@ -25,7 +26,14 @@ const Administrador = () => {
   const [stocktotal, setStocktotal] = useState(0);
   const canvasRef = useRef(null);
   const navigate = useNavigate();
-
+  const [movimientosTotal2, setMovimientosTotal2] = useState(0);
+  const [labels2, setLabels2] = useState(['A']);
+  const [values2, setValues2] = useState([{ uv: 0 }]);
+  const [movimientosTotal, setMovimientosTotal] = useState(0);
+  const [labels1, setLabels1] = useState(['A']);
+  const [values, setValues] = useState([{ uv: 0 }]);
+  
+  
   const handleToggleSidebar = () => {
     const sidebar = document.querySelector(".mySidebar");
     sidebar.classList.toggle("toggled");
@@ -107,7 +115,9 @@ const Administrador = () => {
   const pageinicio = () => {
     navigate('/admin');
     };
-
+    const movimiento = () => {
+      navigate('/admin/movimientos');
+      };
   
    
 
@@ -130,64 +140,78 @@ const Administrador = () => {
       };
     }, [stockGt, stockJt]);
     
-   
-   
-    const FrecuencyPolygonChart = ({ data }) => {
-      const canvasRef = useRef(null);
-      
     
-      useEffect(() => {
-        const chartConfig = {
-          type: 'line',
-          data: {
-            labels: data.labels,
-            datasets: [{
-              data: data.values,
-              fill: true,
-              borderColor: 'red',
-              tension: 0.4
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: {
-                display: false
-              }
-            }
+   
+   
+
+    
+    useEffect(() => {
+      const intervalId = setInterval(() => {
+        const fetchMovimientosTotalGt = async () => {
+          try {
+            const response = await fetch('https://analisis-sistemas.azurewebsites.net/api/movimientosgt', {
+              method: 'GET',
+            });
+            const text = await response.text();
+            const data = JSON.parse(text);
+            setMovimientosTotal(data.total);
+          } catch (error) {
+            console.error(error);
           }
         };
     
-        const chartInstance = new Chart(canvasRef.current, chartConfig);
+        fetchMovimientosTotalGt();
+      }, 200);
     
-        return () => {
-          chartInstance.destroy();
-        };
-      }, [data]);
-    
-      return <canvas ref={canvasRef} />;
-    };
-
-
-    useEffect(() => {
-      const fetchmovimientostotalgt = async () => {
-        try {
-          const response = await fetch('https://analisis-sistemas.azurewebsites.net/api/movimientosgt', {
-            method: 'GET',
-          });
-          const text = await response.text();
-          console.log(text);
-         /* const data = JSON.parse(text);
-          setStocktotal(data.total);*/
-          
-        } catch (error) {
-          console.error(error);
-          
-        }
+      return () => {
+        clearInterval(intervalId);
       };
+    }, [setMovimientosTotal]);
     
-      fetchmovimientostotalgt();
-    }, []);
+      useEffect(() => {
+        const newValues = [...values];
+        newValues.push({ uv: movimientosTotal });
+        setValues(newValues);
+      
+        const newLabel = String.fromCharCode(labels1.length + 65);
+        setLabels1([...labels1, newLabel]);
+      }, [movimientosTotal, labels1, values]);
+    
+  
+  
+     
+      useEffect(() => {
+        const intervalId = setInterval(() => {
+        const fetchMovimientosTotalJt = async () => {
+          try {
+            const response = await fetch('https://analisis-sistemas.azurewebsites.net/api/movimientos', {
+              method: 'GET',
+            });
+            const text = await response.text();
+            const data = JSON.parse(text);
+            setMovimientosTotal2(data.total);
+          } catch (error) {
+            console.error(error);
+          }
+        };
+    
+        fetchMovimientosTotalJt();
+      }, 200);
+    
+      return () => {
+        clearInterval(intervalId);
+      };
+    }, [setMovimientosTotal]);
+    
+      useEffect(() => {
+        const newValues = [...values2];
+        newValues.push({ uv: movimientosTotal2 });
+        setValues2(newValues);
+      
+        const newLabel = String.fromCharCode(labels2.length + 65);
+        setLabels2([...labels2, newLabel]);
+      }, [movimientosTotal2, labels2, values2]);
+
     
   /*  const actualizarMovimientos = (movimiento) => {
       setMovimientos([...movimientos, movimiento]);
@@ -224,6 +248,17 @@ const Administrador = () => {
             <a className="nav-link" href=" " onClick={tablespage}>
               <FontAwesomeIcon icon={faTable} style={{color: "#ffffff",}} />
               <span style={{marginLeft:"10px"}}>Listado de productos</span>
+            </a>
+          </li>
+
+          <div className="sidebar-heading">
+            Stock:
+          </div>
+
+          <li className="nav-item">
+            <a className="nav-link" href=" " onClick={movimiento}>
+              <FontAwesomeIcon icon={faTable} style={{color: "#ffffff",}} />
+              <span style={{marginLeft:"10px"}}>Movimientos</span>
             </a>
           </li>
 
@@ -339,17 +374,59 @@ const Administrador = () => {
               </div>
             </div>
           </div>
+          <h1 style={{color:"black"}}>Estadistica Guatemala</h1>
            
           <div style={{ width: '25%', height: '50%',marginLeft:"75%"}}>
             <canvas ref={canvasRef} />
           </div>
-          <div style={{ width: '77%', height: '50%',marginTop:"-22%"}}>
-          <FrecuencyPolygonChart 
-                data={{
-                  labels: ['M', 'O', 'V', 'I', 'M','I','E','N','T','O','S'],
-                  values: [10, 8, 15, 25, 30, 40, 28, 50, 60, 50, 9]
-                }}/>
-           </div>
+
+         
+
+          <div style={{ width: '75%', marginTop:"-405px"}}>
+      <h2 style={{ fontSize: '20px' }}>Gráfica Guatemala</h2>
+      <ResponsiveContainer width="100%" height={200}>
+        <LineChart
+          data={values}
+          margin={{
+            top: 10,
+            right: 30,
+            left: 0,
+            bottom: 0,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" tick={{ stroke: 'black', strokeWidth: 0.5 }} />
+          <YAxis stroke='black' strokeWidth={0.5} />
+          <Tooltip />
+          <Line type="monotone" dataKey="uv" stroke="#1E90FF" strokeWidth={2} />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+    
+    <div style={{ width: '75%', marginTop:"-218px",paddingTop:"2%" }}>
+      <h2 style={{ fontSize: '20px' }}>Gráfica Jutiapa</h2>
+      <ResponsiveContainer width="100%" height={200}>
+        <LineChart
+          data={values2}
+          margin={{
+            top: 10,
+            right: 30,
+            left: 0,
+            bottom: 0,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" tick={{ stroke: 'black', strokeWidth: 0.5 }} />
+          <YAxis stroke='black' strokeWidth={0.5} />
+          <Tooltip />
+          <Line type="monotone" dataKey="uv" stroke="red" strokeWidth={2} />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+
+
+        
+              
 
          
 

@@ -17,6 +17,9 @@ import {faTrash} from '@fortawesome/free-solid-svg-icons';
 import { useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { faPlus  } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import * as XLSX from 'xlsx';
+import {faFileExcel} from '@fortawesome/free-solid-svg-icons';
 
 const Productslist = () => {
     const [showLogout, setShowLogout] = useState(false);
@@ -364,13 +367,23 @@ const Productslist = () => {
         const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/jtdel/${id}`, {
           method: 'DELETE',
         });
-
-        Swal.fire({
-          title: '¡Éxito!',
-          text: 'Movimiento de Stock correctamente.',
-          icon: 'success'
-        });
-       window.location.reload(); 
+        if (response.status !== 404) {
+          Swal.fire({
+            title: '¡Éxito!',
+            text: 'Movimiento de Stock correctamente.',
+            icon: 'success'
+          });
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+          console.log(response);
+        }else{
+          Swal.fire({
+            title: 'error!',
+            text: 'No existe stock para Enviar',
+            icon: 'error'
+          });
+        }
         console.log(response);
       } catch (error) {
         console.error(error);
@@ -398,13 +411,26 @@ const Productslist = () => {
         const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/gtdel/${id}`, {
           method: 'DELETE',
         });
-
-        Swal.fire({
-          title: '¡Éxito!',
-          text: 'Movimiento de Stock correctamente.',
-          icon: 'success'
-        });
-       window.location.reload();
+      
+        if (response.status !== 404) {
+          Swal.fire({
+            title: '¡Éxito!',
+            text: 'Movimiento de Stock correctamente.',
+            icon: 'success'
+          });
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+          console.log(response);
+        }else{
+          Swal.fire({
+            title: 'error!',
+            text: 'No existe stock para Enviar',
+            icon: 'error'
+          });
+        }
+        
+     //  window.location.reload();
        console.log(response);
       } catch (error) {
         console.error(error);
@@ -601,7 +627,240 @@ const Productslist = () => {
         console.error(error);
       }
     }
+ 
 
+    const enviarProductoGt = async (id) => {
+      const { value: formValues } = await Swal.fire({
+        title: 'Enviar Producto a Cliente',
+        html: `
+          <input id="swal-input1" class="swal2-input" required>
+        `,
+      });
+
+      console.log(formValues);
+    
+      const cantidad = document.getElementById('swal-input1').value;
+    
+      try {
+        const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/stockgt/${id}?cantidad=${cantidad}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        console.log(response);
+        
+        if (response.ok) {
+          Swal.fire({
+            title: '¡Éxito!',
+            text: 'Productos Envidados a Cliente.',
+            icon: 'success'
+          });
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+
+        } else {
+          const errorData = await response.json();
+          // Aquí puedes hacer algo con el objeto `errorData` que contiene información detallada sobre el error
+          console.error('Error:', errorData);
+    
+          Swal.fire({
+            title: '¡Error!',
+            text: 'No se pudo enviar los productos.',
+            icon: 'error'
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          title: '¡Error!',
+          text: 'No hay stock disponible para enviar.',
+          icon: 'error'
+        });
+      }
+    };
+    
+    const enviarProductoJt = async (id) => {
+      const { value: formValues } = await Swal.fire({
+        title: 'Enviar Producto a Cliente',
+        html: `
+          <input id="swal-input1" class="swal2-input" required>
+        `,
+      });
+     
+      console.log(formValues);
+      const cantidad = document.getElementById('swal-input1').value;
+    
+      try {
+        const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/stockjt/${id}?cantidad=${cantidad}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        console.log(response);
+        
+        if (response.ok) {
+          Swal.fire({
+            title: '¡Éxito!',
+            text: 'Productos Envidados a Cliente.',
+            icon: 'success'
+          });
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+
+        } else {
+          const errorData = await response.json();
+          // Aquí puedes hacer algo con el objeto `errorData` que contiene información detallada sobre el error
+          console.error('Error:', errorData);
+    
+          Swal.fire({
+            title: '¡Error!',
+            text: 'No se pudo enviar los productos.',
+            icon: 'error'
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          title: '¡Error!',
+          text: 'No hay stock disponible para enviar.',
+          icon: 'error'
+        });
+      }
+    };
+    
+    
+
+    const generarReporteGt = async () => {
+      try {
+        // Obtiene los datos de tu base de datos
+        const response = await fetch('https://analisis-sistemas.azurewebsites.net/api/getproductsgt', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log(response);
+        if (!response.ok) {
+          throw new Error('Error al obtener los datos de la base de datos');
+        }
+    
+        const data = await response.json();
+    
+        // Elimina la propiedad "img" de cada objeto en el array de datos
+        const dataWithoutImages = data.map(({ img, ...rest }) => rest);
+    
+        // Crea una hoja de cálculo de Excel
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(dataWithoutImages);
+    
+        // Agrega la hoja de cálculo al libro
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
+    
+        // Genera el archivo Excel en formato de buffer
+        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    
+        // Convierte el buffer en un objeto Blob
+        const excelBlob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    
+        // Crea un objeto URL para el Blob
+        const excelUrl = URL.createObjectURL(excelBlob);
+    
+        // Crea un enlace de descarga
+        const downloadLink = document.createElement('a');
+        downloadLink.href = excelUrl;
+        downloadLink.download = 'reporteGt.xlsx';
+    
+        // Agrega el enlace al DOM
+        document.body.appendChild(downloadLink);
+    
+        // Simula un clic en el enlace de descarga para iniciar la descarga
+        downloadLink.click();
+    
+        // Remueve el enlace del DOM después de un tiempo para limpiar
+        setTimeout(() => {
+          document.body.removeChild(downloadLink);
+          URL.revokeObjectURL(excelUrl);
+        }, 100);
+    
+      } catch (error) {
+        console.error(error);
+        console.log(error.message);
+        // Manejo del error en caso de que ocurra alguna falla en la obtención de datos o generación del archivo
+      }
+    };
+    
+
+    const generarReporteJt = async () => {
+      try {
+        // Obtiene los datos de tu base de datos
+        const response = await fetch('https://analisis-sistemas.azurewebsites.net/api/getproductsjt', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+    
+        if (!response.ok) {
+          throw new Error('Error al obtener los datos de la base de datos');
+        }
+    
+        const data = await response.json();
+    
+        // Elimina la propiedad "img" de cada objeto en el array de datos
+        const dataWithoutImages = data.map(({ img, ...rest }) => rest);
+    
+        // Crea una hoja de cálculo de Excel
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(dataWithoutImages);
+    
+        // Agrega la hoja de cálculo al libro
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
+    
+        // Genera el archivo Excel en formato de buffer
+        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    
+        // Convierte el buffer en un objeto Blob
+        const excelBlob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    
+        // Crea un objeto URL para el Blob
+        const excelUrl = URL.createObjectURL(excelBlob);
+    
+        // Crea un enlace de descarga
+        const downloadLink = document.createElement('a');
+        downloadLink.href = excelUrl;
+        downloadLink.download = 'reporteJt.xlsx';
+    
+        // Agrega el enlace al DOM
+        document.body.appendChild(downloadLink);
+    
+        // Simula un clic en el enlace de descarga para iniciar la descarga
+        downloadLink.click();
+    
+        // Remueve el enlace del DOM después de un tiempo para limpiar
+        setTimeout(() => {
+          document.body.removeChild(downloadLink);
+          URL.revokeObjectURL(excelUrl);
+        }, 100);
+    
+      } catch (error) {
+        console.error(error);
+        console.log(error.message);
+        // Manejo del error en caso de que ocurra alguna falla en la obtención de datos o generación del archivo
+      }
+    };
+    
+    
+    
+    
+    
 
 
     
@@ -624,6 +883,10 @@ const Productslist = () => {
     }
     const pageinicio = () => {
         navigate('/admin');
+        };
+
+    const movimiento = () => {
+        navigate('/admin/movimientos');
         };
    
     return (
@@ -658,6 +921,18 @@ const Productslist = () => {
               <span style={{marginLeft:"10px"}}>Listado de productos</span>
             </a>
           </li>
+
+          <div className="sidebar-heading">
+            Stock:
+          </div>
+
+          <li className="nav-item">
+            <a className="nav-link" href=" " onClick={movimiento}>
+              <FontAwesomeIcon icon={faTable} style={{color: "#ffffff",}} />
+              <span style={{marginLeft:"10px"}}>Movimientos</span>
+            </a>
+          </li>
+
 
           <hr className="sidebar-divider d-none d-md-block"></hr>
 
@@ -719,6 +994,9 @@ const Productslist = () => {
                         Ingresar Producto
                       </button>
                  <Form>
+                 
+
+
                     <Form.Group  id="form-search" className="mb-3" controlId="formBasicEmail">
                         <Form.Control  type="text" placeholder=" Search..." value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} />
                     </Form.Group>
@@ -726,6 +1004,14 @@ const Productslist = () => {
                   </div>
                   <div className="card-body">
                     <div className="table-responsive">
+                    <button className='buttonreporte' onClick={ generarReporteGt}>
+                        <FontAwesomeIcon icon={faFileExcel}  style={{ color: "#ffffff" }} /> 
+                         Reporte GT
+                    </button>
+                    <button className='buttonreportejt' onClick={ generarReporteJt}>
+                        <FontAwesomeIcon icon={faFileExcel}  style={{ color: "#ffffff" }} /> 
+                         Reporte JT
+                    </button>
                     <Table striped bordered hover>
                         <thead>
                             <tr>
@@ -760,6 +1046,10 @@ const Productslist = () => {
                                             <FontAwesomeIcon icon={faPlus} style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
                                             Stock
                                         </button>
+                                        <button className='buttonstock' onClick={() => enviarProductoGt(product.id_producto)}>
+                                        <FontAwesomeIcon icon={faPaperPlane}  style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
+                                            Enviar Cliente 
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -785,6 +1075,10 @@ const Productslist = () => {
                                         <button className='buttonstock' onClick={() => MovimientoStockJt(products2.id_producto)}>
                                             <FontAwesomeIcon icon={faPlus} style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
                                             Stock
+                                        </button>
+                                        <button className='buttonstock' onClick={() => enviarProductoJt(products2.id_producto)}>
+                                            <FontAwesomeIcon icon={faPaperPlane}  style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
+                                            Enviar Cliente
                                         </button>
                                     </td>
                                 </tr>
