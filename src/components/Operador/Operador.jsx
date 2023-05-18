@@ -58,7 +58,7 @@ const Operador = () => {
 
 
 useEffect(() => {
-  fetch("http://localhost:7071/api/GetProducts")
+  fetch("https://analisis-sistemas.azurewebsites.net/api/getproducts")
     .then((response) => response.json())
     .then((data) => {
       console.log(data); // muestra los datos obtenidos en consola

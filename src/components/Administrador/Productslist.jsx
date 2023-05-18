@@ -83,13 +83,14 @@ const Productslist = () => {
       });
     }
     const eliminarProductoJT = (id) => {
-      fetch(`https://analisis-sistemas.azurewebsites.net/api/delete/jt/${id}`, {
+      fetch(` https://analisis-sistemas.azurewebsites.net/api/delete/jt/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
         }
       })
       .then(response => {
+        console.log(response);
         if (response.ok) {
           const updatedProducts = products.filter(product => product.id_producto !== id);
           setProducts(updatedProducts);
@@ -585,7 +586,9 @@ const Productslist = () => {
                 icon: 'success'
               });
         
-              window.location.reload();
+             setTimeout(() => {
+                window.location.reload();
+              }, 1000);
             } else {
               const errorData = await response.json();
               // Aquí puedes hacer algo con el objeto `errorData` que contiene información detallada sobre el error
