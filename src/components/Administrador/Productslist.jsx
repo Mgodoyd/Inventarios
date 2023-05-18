@@ -49,6 +49,7 @@ const Productslist = () => {
               return product;
             }
           });
+
           setProducts(transformedProducts);
           setProducts2(transformedProducts2);
         });
@@ -96,7 +97,9 @@ const Productslist = () => {
             icon: 'success',
             title: 'Producto eliminado correctamente',
           })
-          window.location.reload(); 
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         } else {
           Swal.fire({
             icon: 'error',
@@ -126,6 +129,10 @@ const Productslist = () => {
       const data = await response.json();
       return data;
     };
+
+
+
+
     const actualizarProductoJt = async (id) => {
       try {
         const data = await getProductoJt(id);
@@ -220,7 +227,9 @@ const Productslist = () => {
               text: 'El producto ha sido actualizado correctamente.',
               icon: 'success'
             });
-            window.location.reload(); 
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000); 
           } else {
             const errorData = await response.json();
             // Aquí puedes hacer algo con el objeto `errorData` que contiene información detallada sobre el error
@@ -236,12 +245,18 @@ const Productslist = () => {
         console.error(error);
       }
     }
+
+
     
     const getProductoGT = async (id) => {
       const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/gt/${id}`);
       const data = await response.json();
       return data;
     };
+
+
+
+
     const actualizarProducto = async (id) => {
       try {
         const data1 = await getProductoGT(id);
@@ -336,7 +351,9 @@ const Productslist = () => {
               text: 'El producto ha sido actualizado correctamente.',
               icon: 'success'
             });
-            window.location.reload(); 
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
           } else {
             const errorData = await response.json();
             // Aquí puedes hacer algo con el objeto `errorData` que contiene información detallada sobre el error
@@ -352,6 +369,9 @@ const Productslist = () => {
         console.error(error);
       }
     }
+
+
+
      
     const MovimientoStockJt = async (id) => {
       try {
@@ -396,6 +416,8 @@ const Productslist = () => {
       }
 
     }
+
+
  
     const MovimientoStock = async (id) => {
       try {
@@ -443,6 +465,9 @@ const Productslist = () => {
       }
 
     }
+
+
+
 
     const insertProducts = async () => {
       try {
@@ -599,7 +624,9 @@ const Productslist = () => {
               });
               
         
-              window.location.reload();
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
             } else {
               const errorData = await response.json();
               // Aquí puedes hacer algo con el objeto `errorData` que contiene información detallada sobre el error
@@ -611,13 +638,7 @@ const Productslist = () => {
                 icon: 'error'
               });
 
-              if (response.status === 409) {
-                Swal.fire({
-                  title: '¡Error!',
-                  text: 'Producto ya existente.',
-                  icon: 'error'
-                });
-              }
+              
             }
           }
         }
@@ -625,6 +646,11 @@ const Productslist = () => {
 
       } catch (error) {
         console.error(error);
+        Swal.fire({
+          title: '¡Error!',
+          text: 'Producto ya existente.',
+          icon: 'error'
+        });
       }
     }
  
@@ -682,6 +708,9 @@ const Productslist = () => {
         });
       }
     };
+
+
+
     
     const enviarProductoJt = async (id) => {
       const { value: formValues } = await Swal.fire({
@@ -1030,7 +1059,7 @@ const Productslist = () => {
                                     <td>{product.id_producto}</td>
                                     <td>{product.nombbre}</td>
                                     <td>{product.precio}</td>
-                                    <td>{product.stock}</td>
+                                    <td>{product.stock <= product.stock_minimo ? <span style={{ color: 'red' }}>Stock mínimo alcanzado: {product.stock}</span> : product.stock}</td>
                                     <td>{product.stock_minimo}</td>
                                     <td>{product.id_ubicacion === 2 ? "Guatemala" : "Jutiapa"}</td>
                                     <td className='column-accion'>
@@ -1060,7 +1089,7 @@ const Productslist = () => {
                                     <td>{products2.id_producto}</td>
                                     <td>{products2.nombre}</td>
                                     <td>{products2.precio}</td>
-                                    <td>{products2.stock}</td>
+                                    <td>{products2.stock <= products2.stock_minimo ? <span style={{ color: 'red' }}>Stock mínimo alcanzado: {products2.stock}</span> : products2.stock}</td>
                                     <td>{products2.stock_minimo}</td>
                                     <td>{products2.id_ubicacion === 2 ? "Guatemala" : "Jutiapa"}</td>
                                     <td className='column-accion'>
