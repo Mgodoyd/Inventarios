@@ -105,6 +105,10 @@ const Login = () => {
         setFormValues({ ...formValues, [name]: value });
       };
 
+      const handleLPassword = () => {
+        navigate('/updatepassword');
+      };
+
 
   return (
     <div style={{ marginLeft: '25%', marginTop: '35%' }}>
@@ -146,6 +150,7 @@ const Login = () => {
             </span>
           </div>
         </Form.Group>
+        <a onClick={handleLPassword} href=" ">Forgot your password?</a>
         <Button className="submit-button" variant="primary" type="submit" disabled={isSubmitting}>
         {isSubmitting ? 'Loading...' : (
             <>

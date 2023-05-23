@@ -53,9 +53,56 @@ h3{
   line-height: 1.5;
   padding: .375rem .75rem;
   transition: background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-  margin-top: 1rem;
+  margin-top: 2rem;
   margin-right: 40rem;
   height: 40px;
+}
+a{
+  color: #4f9cf7;
+  text-decoration: none;
+  margin-left: 38.5%;
+  position: absolute;
+}
+.container-form{
+  display: flex;
+  height: 100vh;
+}
+.form-password{
+  width: 150%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.email-password{
+  width: 350px;
+  height: 70%;
+  margin-left: -10%;
+}
+.password-from{
+  width: 350px;
+  height: 70%;
+  margin-left: -10%;
+}
+.text{
+  margin-left: -10%;
+}
+.button-password{
+  width: 180px;
+  margin-left: 30%;
+  margin-top: 1rem;
+}
+.password {
+  background-image: url('../../../public/Images/password.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  width: 120%;
+  height:500px;
+  position: relative;
+  margin-left: 150px;
+  margin-top: 7%;
 }
 
 /* Media queries para hacer el login responsive */
@@ -79,6 +126,7 @@ h3{
     width: 40%;
     margin-left: 30%;
   }
+
 }
 
 @media (min-width: 576px) { /* Dispositivos pequeños (tablets) */
