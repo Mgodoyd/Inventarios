@@ -1,4 +1,20 @@
-
+.dropdown-item {
+  width: 100%;
+  padding: 0.25rem 1.5rem;
+  clear: both;
+  font-weight: 400;
+  color: #3a3b45;
+  text-align: inherit;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+  margin-left: -0.5%;
+  margin-top: -5% ;
+}
+.dropdown-menu{
+    margin-left: -0.7%;
+    height: 60%;
+}
   .cards_total{
     display: flex;
     flex-wrap: wrap;
@@ -60,5 +76,38 @@
     border-radius: 5px;
     margin-left: 8%;
   }
+  .wrapper #listado{
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.sidebar .nav-item .nav-link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  width: 14rem;
+  margin-top: 2.5rem;
+  margin-left: 1%;
+}
+.sidebar .sidebar-brand {
+  font-size: 1rem;
+  margin-left:-5.5%;
+  width: 100%;
+  position: relative;
+}
+
+.sidebar-headingop{
+  font-size: 0.8rem;
+  color: rgb(201, 201, 201) ;
+  margin-top: 1rem;
+  margin-left: 1rem;
+}
+
 
   

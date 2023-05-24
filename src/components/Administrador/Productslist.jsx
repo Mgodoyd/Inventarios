@@ -6,7 +6,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { faCircleDot } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import '../Administrador/css/sb-admin-2.min.css';
+//import '../Administrador/css/sb-admin-2.min.css';
 import './img/undraw_profile_2.png';
 import './css/style.css';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
@@ -27,92 +27,154 @@ const Productslist = () => {
     const [products2, setProducts2] = useState([]);
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
-
-   
- 
-      
+    
+    
+    const convertByteArrayToBase64 = (byteArray) => {
+      const bytes = new Uint8Array(byteArray);
+      let binary = '';
+      for (let i = 0; i < bytes.length; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    };
+    
+    
     useEffect(() => {
       fetch("https://analisis-sistemas.azurewebsites.net/api/getproducts")
         .then((response) => response.json())
         .then((data) => {
-          const transformedProducts = data.products.map(product => {
+          const transformedProducts = data.products.map((product) => {
             if (product.id_ubicacion === 2) {
-              return { ...product, ubicacion: "Guatemala" };
+              const base64String = convertByteArrayToBase64(product.img);
+               return { ...product, ubicacion: "Guatemala", image: base64String };
             } else {
               return product;
             }
           });
-          const transformedProducts2 = data.products2.map(product => {
-            if (product.id_ubicacion === 1) {
-              return { ...product, ubicacion: "Jutiapa" };
+    
+          const transformedProducts2 = data.products2.map((products2) => {
+           
+            if (products2.id_ubicacion === 1) {
+              const base64String = convertByteArrayToBase64(products2.img);
+             // console.log(products2.img);
+              return { ...products2, ubicacion: "Jutiapa", image: base64String };
             } else {
-              return product;
+              return products2;
             }
           });
-
           setProducts(transformedProducts);
           setProducts2(transformedProducts2);
         });
     }, []);
     
+    
     const eliminarProductoGT = (id) => {
-      fetch(`https://analisis-sistemas.azurewebsites.net/api/delete/gt/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(response => {
-        if (response.ok) {
-          const updatedProducts = products.filter(product => product.id_producto !== id);
-          setProducts(updatedProducts);
-          Swal.fire({
-            icon: 'success',
-            title: 'Producto eliminado correctamente',
+      const producto = products.find(product => product.id_producto === id);
+
+
+      if (!producto) {
+        console.error('El producto no existe');
+        return;
+      }
+    
+      const { nombbre } = producto;
+    
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: `Se eliminará el producto ${nombbre}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`https://analisis-sistemas.azurewebsites.net/api/delete/gt/${id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            }
           })
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Producto relacionado a un movimiento',
-          })
+            .then(response => {
+              if (response.ok) {
+                const updatedProducts = products.filter(product => product.id_producto !== id);
+                setProducts(updatedProducts);
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Producto eliminado correctamente',
+                });
+              } else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Producto relacionado a un movimiento',
+                });
+              }
+            })
+            .catch(error => {
+              console.error(error);
+              alert('Ha ocurrido un error al eliminar el producto.');
+            });
         }
-      })
-      .catch(error => {
-        console.error(error);
-        alert('Ha ocurrido un error al eliminar el producto.');
       });
-    }
+    };
+    
+    
     const eliminarProductoJT = (id) => {
-      fetch(` https://analisis-sistemas.azurewebsites.net/api/delete/jt/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(response => {
-        console.log(response);
-        if (response.ok) {
-          const updatedProducts = products.filter(product => product.id_producto !== id);
-          setProducts(updatedProducts);
-          Swal.fire({
-            icon: 'success',
-            title: 'Producto eliminado correctamente',
+      const producto = products2.find(product => product.id_producto === id);
+
+
+      if (!producto) {
+        console.error('El producto no existe');
+        return;
+      }
+    
+      const { nombre } = producto;
+    
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: `Se eliminará el producto ${nombre}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`https://analisis-sistemas.azurewebsites.net/api/delete/jt/${id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            }
           })
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Producto relacionado a un movimiento',
-          })
+            .then(response => {
+              console.log(response);
+              if (response.ok) {
+                const updatedProducts = products.filter(product => product.id_producto !== id);
+                setProducts(updatedProducts);
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Producto eliminado correctamente',
+                });
+                setTimeout(() => {
+                  window.location.reload();
+                }, 1000);
+              } else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Producto relacionado a un movimiento',
+                });
+              }
+            })
+            .catch(error => {
+              console.error(error);
+              alert('Ha ocurrido un error al eliminar el producto.');
+            });
         }
-      })
-      .catch(error => {
-        console.error(error);
-        alert('Ha ocurrido un error al eliminar el producto.');
       });
-    }
+    };
+    
     
     
     const filteredProducts = products.filter(product => {
@@ -137,9 +199,9 @@ const Productslist = () => {
     const actualizarProductoJt = async (id) => {
       try {
         const data = await getProductoJt(id);
-        
+    
         console.log(data);
-        
+    
         if (!data) {
           console.log('La respuesta es undefined o null');
           return;
@@ -147,26 +209,30 @@ const Productslist = () => {
     
         const producto = data;
         const nombre = producto[0].nombbre;
-        console.log(nombre);
         const precio = producto[0].precio;
         const img = producto[0].img;
         const stock = producto[0].stock;
         const stock_minimo = producto[0].stock_minimo;
-        
-        
+    
+        const filteredProduct = filteredProducts2.find(products2 => products2.id_producto === id);
+    
         const { value: formValues } = await Swal.fire({
           title: 'Actualizar Producto',
           html:
           `<h3>Producto</h3>
-          <input id="swal-input1" class="swal2-input" value="${nombre}" required>
-          <h3>Precio</h3>
-          <input id="swal-input2" class="swal2-input" value="${precio}" required>
-          <h3>Stock</h3>
-          <input id="swal-input3" class="swal2-input" value="${stock}" required>
-          <h3>Stock Minimo</h3>
-          <input id="swal-input4" class="swal2-input" value="${stock_minimo}" required>
-          <h3>Imagen</h3>
-          <input id="swal-input5" type="file" accept="image/*" value="${img}">`,
+           <input id="swal-input1" class="swal2-input" value="${nombre}" readonly required>
+           <h3>Precio</h3>
+           <input id="swal-input2" class="swal2-input" value="${precio}" required>
+           <h3>Stock</h3>
+           <input id="swal-input3" class="swal2-input" value="${stock}" required>
+           <h3>Stock Minimo</h3>
+           <input id="swal-input4" class="swal2-input" value="${stock_minimo}" required>
+           <h3>Imagen</h3>
+           <img src="data:image/png;base64,${filteredProduct.image}" alt="Imagen del producto" style="max-width: 200px;">
+           <input id="swal-input5" type="file" accept="image/png" value="${img}">
+    
+    
+        `,
           focusConfirm: false,
           showCancelButton: true,
           confirmButtonText: 'Guardar',
@@ -177,8 +243,37 @@ const Productslist = () => {
           preConfirm: async () => {
             const reader = new FileReader();
             const file = document.getElementById('swal-input5').files[0];
+          
+            if (!file) {
+              const input1 = document.getElementById('swal-input1');
+              const input2 = document.getElementById('swal-input2');
+              const input3 = document.getElementById('swal-input3');
+              const input4 = document.getElementById('swal-input4');
+          
+              if (!input1.value || !input2.value || !input3.value || !input4.value) {
+                Swal.showValidationMessage('Llena todos los campos requeridos!');
+                return false; // Rechazar la promesa si faltan campos requeridos
+              }
+          
+              return [
+                input1.value,
+                input2.value,
+                input3.value,
+                input4.value,
+                filteredProduct.image // Utilizar la imagen existente
+              ];
+            }
+          
+            const fileName = file.name;
+            const fileExtension = fileName.split('.').pop().toLowerCase();
+          
+            if (fileExtension !== 'png') {
+              Swal.showValidationMessage('Por favor, selecciona un archivo PNG.');
+              return false; // Rechazar la promesa si no es un archivo PNG válido
+            }
+          
             reader.readAsDataURL(file);
-            // Devuelve una promesa que resuelve con el resultado una vez que la imagen se ha cargado
+          
             return new Promise((resolve, reject) => {
               reader.onload = () => {
                 const base64Image = reader.result.split(',')[1];
@@ -186,6 +281,7 @@ const Productslist = () => {
                 const input2 = document.getElementById('swal-input2');
                 const input3 = document.getElementById('swal-input3');
                 const input4 = document.getElementById('swal-input4');
+          
                 if (!input1.value || !input2.value || !input3.value || !input4.value) {
                   Swal.showValidationMessage('Llena todos los campos requeridos!');
                   reject();
@@ -198,7 +294,7 @@ const Productslist = () => {
                     base64Image
                   ]);
                 }
-              }
+              };
               reader.onerror = () => {
                 reader.abort();
                 reject(new Error('Error al cargar la imagen'));
@@ -206,17 +302,17 @@ const Productslist = () => {
             });
           }
         });
-        
+    
         if (formValues) {
           const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/update/jt/${id}`, {
             method: 'PUT',
             body: JSON.stringify({
-              "NOMBRE": "'" + formValues[0] +"'",
+              "NOMBRE": formValues[0],
               "PRECIO": formValues[1],
-              "IMG": "'" + formValues[4] + "'",
+              "IMG": formValues[4],
               "STOCK": formValues[2],
               "STOCK_MINIMO": formValues[3]
-            }),
+            }),            
             headers: {
               'Content-Type': 'application/json'
             }
@@ -230,7 +326,7 @@ const Productslist = () => {
             });
             setTimeout(() => {
               window.location.reload();
-            }, 1000); 
+            }, 1000);
           } else {
             const errorData = await response.json();
             // Aquí puedes hacer algo con el objeto `errorData` que contiene información detallada sobre el error
@@ -245,7 +341,8 @@ const Productslist = () => {
       } catch (error) {
         console.error(error);
       }
-    }
+    };
+    
 
 
     
@@ -254,7 +351,6 @@ const Productslist = () => {
       const data = await response.json();
       return data;
     };
-
 
 
 
@@ -268,6 +364,7 @@ const Productslist = () => {
           console.log('La respuesta es undefined o null');
           return;
         }
+        const filteredProduct = filteredProducts.find(product => product.id_producto === id);
     
         const producto = data1;
         const nombre = producto[0].nombbre;
@@ -276,21 +373,25 @@ const Productslist = () => {
         const stock = producto[0].stock;
         const stock_minimo = producto[0].stock_minimo;
     
-      
+
     
         const { value: formValues } = await Swal.fire({
           title: 'Actualizar Producto',
           html:
-          `<h3>Producto</h3>
-          <input id="swal-input1" class="swal2-input" value="${nombre}" required>
-          <h3>Precio</h3>
-          <input id="swal-input2" class="swal2-input" value="${precio}" required>
-          <h3>Stock</h3>
-          <input id="swal-input3" class="swal2-input" value="${stock}" required>
-          <h3>Stock Minimo</h3>
-          <input id="swal-input4" class="swal2-input" value="${stock_minimo}" required>
-          <h3>Imagen</h3>
-          <input id="swal-input5" type="file" accept="image/*" value="${img}">`,
+           `<h3>Producto</h3>
+           <input id="swal-input1" class="swal2-input" value="${nombre}" readonly required>
+           <h3>Precio</h3>
+           <input id="swal-input2" class="swal2-input" value="${precio}" required>
+           <h3>Stock</h3>
+           <input id="swal-input3" class="swal2-input" value="${stock}" required>
+           <h3>Stock Minimo</h3>
+           <input id="swal-input4" class="swal2-input" value="${stock_minimo}" required>
+           <h3>Imagen</h3>
+           <img src="data:image/png;base64,${filteredProduct.image}" alt="Imagen del producto" style="max-width: 200px;">
+           <input id="swal-input5" type="file" accept="image/png" value="${img}">
+          
+        
+        `,
           focusConfirm: false,
           showCancelButton: true,
           confirmButtonText: 'Guardar',
@@ -301,8 +402,37 @@ const Productslist = () => {
           preConfirm: async () => {
             const reader = new FileReader();
             const file = document.getElementById('swal-input5').files[0];
+          
+            if (!file) {
+              const input1 = document.getElementById('swal-input1');
+              const input2 = document.getElementById('swal-input2');
+              const input3 = document.getElementById('swal-input3');
+              const input4 = document.getElementById('swal-input4');
+          
+              if (!input1.value || !input2.value || !input3.value || !input4.value) {
+                Swal.showValidationMessage('Llena todos los campos requeridos!');
+                return false; // Rechazar la promesa si faltan campos requeridos
+              }
+          
+              return [
+                input1.value,
+                input2.value,
+                input3.value,
+                input4.value,
+                filteredProduct.image // Utilizar la imagen existente
+              ];
+            }
+          
+            const fileName = file.name;
+            const fileExtension = fileName.split('.').pop().toLowerCase();
+          
+            if (fileExtension !== 'png') {
+              Swal.showValidationMessage('Por favor, selecciona un archivo PNG.');
+              return false; // Rechazar la promesa si no es un archivo PNG válido
+            }
+          
             reader.readAsDataURL(file);
-            // Devuelve una promesa que resuelve con el resultado una vez que la imagen se ha cargado
+          
             return new Promise((resolve, reject) => {
               reader.onload = () => {
                 const base64Image = reader.result.split(',')[1];
@@ -310,6 +440,7 @@ const Productslist = () => {
                 const input2 = document.getElementById('swal-input2');
                 const input3 = document.getElementById('swal-input3');
                 const input4 = document.getElementById('swal-input4');
+          
                 if (!input1.value || !input2.value || !input3.value || !input4.value) {
                   Swal.showValidationMessage('Llena todos los campos requeridos!');
                   reject();
@@ -322,7 +453,7 @@ const Productslist = () => {
                     base64Image
                   ]);
                 }
-              }
+              };
               reader.onerror = () => {
                 reader.abort();
                 reject(new Error('Error al cargar la imagen'));
@@ -335,12 +466,13 @@ const Productslist = () => {
           const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/update/gt/${id}`, {
             method: 'PUT',
             body: JSON.stringify({
-              "NOMBRE": "'" + formValues[0] +"'",
+              "NOMBRE": formValues[0],
               "PRECIO": formValues[1],
-              "IMG": "'" + formValues[4] + "'",
+              "IMG": formValues[4],
               "STOCK": formValues[2],
               "STOCK_MINIMO": formValues[3]
             }),
+            
             headers: {
               'Content-Type': 'application/json'
             }
@@ -380,12 +512,28 @@ const Productslist = () => {
 
         console.log(data1);
 
+        let stockresto = 0;
+
         if (!data1) {
           console.log('La respuesta es undefined o null');
           return;
         }
 
-        const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/jtdel/${id}`, {
+        const { value: formValues } = await Swal.fire({
+          title: 'Stock a Enviar',
+          html: `
+            <input id="swal-input1" class="swal2-input" value="${stockresto}" required>
+          `,
+          focusConfirm: false,
+          preConfirm: () => {
+            stockresto = document.getElementById('swal-input1').value;
+            return [stockresto];
+          }
+        });
+    
+        console.log(formValues);
+
+        const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/jtdel/${id}?stockresto=${stockresto}`, {
           method: 'DELETE',
         });
         if (response.status !== 404) {
@@ -423,18 +571,33 @@ const Productslist = () => {
     const MovimientoStock = async (id) => {
       try {
         const data1 = await getProductoGT(id);
-
+    
         console.log(data1);
-
+    
+        let stockresto = 0;
+    
         if (!data1) {
           console.log('La respuesta es undefined o null');
           return;
         }
-
-        const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/gtdel/${id}`, {
+    
+        const { value: formValues } = await Swal.fire({
+          title: 'Stock a Enviar',
+          html: `
+            <input id="swal-input1" class="swal2-input" value="${stockresto}" required>
+          `,
+          focusConfirm: false,
+          preConfirm: () => {
+            stockresto = document.getElementById('swal-input1').value;
+            return [stockresto];
+          }
+        });
+    
+        console.log(formValues);
+        const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/gtdel/${id}?stockresto=${stockresto}`, {
           method: 'DELETE',
         });
-      
+    
         if (response.status !== 404) {
           Swal.fire({
             title: '¡Éxito!',
@@ -445,16 +608,16 @@ const Productslist = () => {
             window.location.reload();
           }, 1000);
           console.log(response);
-        }else{
+        } else {
           Swal.fire({
             title: 'error!',
             text: 'No existe stock para Enviar',
             icon: 'error'
           });
         }
-        
-     //  window.location.reload();
-       console.log(response);
+    
+        //  window.location.reload();
+        console.log(response);
       } catch (error) {
         console.error(error);
         Swal.fire({
@@ -462,42 +625,34 @@ const Productslist = () => {
           text: 'No se pudo realizar el movimiento de stock.',
           icon: 'error'
         });
-        
       }
-
-    }
+    };
+    
+    
 
 
 
 
     const insertProducts = async () => {
       try {
-       
-        const nombre = " ";
-        const precio = 0;
-        const stock = 0;
-        const stock_minimo = 0;
-        const img = " ";
-
         const { value: formValues } = await Swal.fire({
           title: 'Insertar Producto',
-          html:
-          `<h3>Producto</h3>
-          <input id="swal-input1" class="swal2-input" value="${nombre}" required>
-          <h3>Precio</h3>
-          <input id="swal-input2" class="swal2-input" value="${precio}" required>
-          <h3>Stock</h3>
-          <input id="swal-input3" class="swal2-input" value="${stock}" required>
-          <h3>Stock Minimo</h3>
-          <input id="swal-input4" class="swal2-input" value="${stock_minimo}" required>
-          <h3>Imagen</h3>
-          <input id="swal-input5" type="file" accept="image/*" value="${img}">
-          <h2>Insertar en...?</h2>
-          <input id="swal-input6" type="checkbox" name="tipo" value="gt">
-          <label for="swal-input6">GT</label>
-
-          <input id="swal-input7" type="checkbox" name="tipo" value="jt">
-          <label for="swal-input7">JT</label>`,
+          html: `
+            <h3>Producto</h3>
+            <input id="swal-input1" class="swal2-input" required>
+            <h3>Precio</h3>
+            <input id="swal-input2" class="swal2-input" required>
+            <h3>Stock</h3>
+            <input id="swal-input3" class="swal2-input" required>
+            <h3>Stock Minimo</h3>
+            <input id="swal-input4" class="swal2-input" required>
+            <h3>Imagen</h3>
+            <input id="swal-input5" type="file" accept="image/png">
+            <h2>Insertar en...?</h2>
+            <input id="swal-input6" type="checkbox" name="tipo" value="gt">
+            <label for="swal-input6">GT</label>
+            <input id="swal-input7" type="checkbox" name="tipo" value="jt">
+            <label for="swal-input7">JT</label>`,
           didOpen: () => {
             const checkboxes = document.querySelectorAll('input[type="checkbox"]');
             checkboxes.forEach((checkbox) => {
@@ -524,6 +679,32 @@ const Productslist = () => {
           preConfirm: async () => {
             const reader = new FileReader();
             const file = document.getElementById('swal-input5').files[0];
+          
+            if (!file) {
+              const input1 = document.getElementById('swal-input1');
+              const input2 = document.getElementById('swal-input2');
+              const input3 = document.getElementById('swal-input3');
+              const input4 = document.getElementById('swal-input4');
+              
+              if (!input1.value || !input2.value || !input3.value || !input4.value) {
+                Swal.showValidationMessage('Llena todos los campos requeridos!', {
+                  timer: 3000 // Tiempo en milisegundos (3 segundos en este caso)
+                });
+                return false; // Rechazar la promesa si faltan campos requeridos
+              }
+          
+              Swal.showValidationMessage('Selecciona una imagen!');
+              return false; // Rechazar la promesa si no se selecciona una imagen
+            }
+          
+            const fileName = file.name;
+            const fileExtension = fileName.split('.').pop().toLowerCase();
+          
+            if (fileExtension !== 'png') {
+              Swal.showValidationMessage('Por favor, selecciona un archivo PNG.');
+              return false; // Rechazar la promesa si no es un archivo PNG válido
+            }
+          
             reader.readAsDataURL(file);
             // Devuelve una promesa que resuelve con el resultado una vez que la imagen se ha cargado
             return new Promise((resolve, reject) => {
@@ -535,12 +716,10 @@ const Productslist = () => {
                 const input4 = document.getElementById('swal-input4');
                 const checkbox1 = document.getElementById('swal-input6');
                 const checkbox2 = document.getElementById('swal-input7');
-                if (!input4.value || (!checkbox1.checked && !checkbox2.checked)) {
-                  Swal.showValidationMessage('Llena todos los campos son requeridos!', {
-                    timer: 3000 // Tiempo en milisegundos (3 segundos en este caso)
-                  });
+          
+                if (!input1.value || !input2.value || !input3.value || !input4.value) {
+                  Swal.showValidationMessage('Llena todos los campos requeridos!');
                   reject();
-                
                 } else {
                   resolve([
                     input1.value,
@@ -552,7 +731,8 @@ const Productslist = () => {
                     checkbox2.checked
                   ]);
                 }
-              }
+              };
+          
               reader.onerror = () => {
                 reader.abort();
                 reject(new Error('Error al cargar la imagen'));
@@ -560,7 +740,7 @@ const Productslist = () => {
             });
           },
         });
-        
+    
         if (formValues) {
           if (document.getElementById('swal-input6').checked) {
             const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/insert/gt`, {
@@ -585,8 +765,8 @@ const Productslist = () => {
                 text: 'El producto ha sido insertado correctamente.',
                 icon: 'success'
               });
-        
-             setTimeout(() => {
+    
+              setTimeout(() => {
                 window.location.reload();
               }, 1000);
             } else {
@@ -600,9 +780,7 @@ const Productslist = () => {
                 icon: 'error'
               });
             }
-          }
-        
-          if (document.getElementById('swal-input7').checked) {
+          } else if (document.getElementById('swal-input7').checked) {
             const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/insert/jt`, {
               method: 'POST',
               body: JSON.stringify({
@@ -625,8 +803,7 @@ const Productslist = () => {
                 text: 'El producto ha sido insertado correctamente.',
                 icon: 'success'
               });
-              
-        
+    
               setTimeout(() => {
                 window.location.reload();
               }, 1000);
@@ -640,13 +817,10 @@ const Productslist = () => {
                 text: 'No se pudo insertar el producto.',
                 icon: 'error'
               });
-
-              
             }
           }
         }
-        
-
+    
       } catch (error) {
         console.error(error);
         Swal.fire({
@@ -656,6 +830,7 @@ const Productslist = () => {
         });
       }
     }
+    
  
 
     const enviarProductoGt = async (id) => {
@@ -920,6 +1095,10 @@ const Productslist = () => {
     const movimiento = () => {
         navigate('/admin/movimientos');
         };
+
+    const eliminacion = () => {
+        navigate('/admin/bitacora');
+        };
    
     return (
         <>
@@ -929,10 +1108,10 @@ const Productslist = () => {
             <div className="sidebar-brand-icon rotate-n-15">
               <FontAwesomeIcon icon={ faLaughWink } size="2x" style={{color: "#ffffff",}} />
             </div>
-            <div className="sidebar-brand-text mx-3">Inventario - SCRUM <sup>2</sup></div>
+            <div className="sidebar-brand-text mx-3">   Inventario - SCRUM<sup>2</sup></div>
           </a>
 
-          <hr className="sidebar-divider my-0" />
+          
 
           <li className="nav-item active">
             <a className="nav-link" href=" " onClick={pageinicio}>
@@ -941,7 +1120,7 @@ const Productslist = () => {
             </a>
           </li>
 
-          <hr className="sidebar-divider" />
+         
 
           <div className="sidebar-heading">
             Existencia:
@@ -964,9 +1143,15 @@ const Productslist = () => {
               <span style={{marginLeft:"10px"}}>Movimientos</span>
             </a>
           </li>
+         
+          <li className="nav-item">
+            <a className="nav-link" href=" " onClick={eliminacion}>
+              <FontAwesomeIcon icon={faTable} style={{color: "#ffffff",}} />
+              <span style={{marginLeft:"10px"}}>Bitácora Eliminación</span>
+            </a>
+          </li>
 
-
-          <hr className="sidebar-divider d-none d-md-block"></hr>
+         
 
           <div className="text-center d-none d-md-inline">
             <button className="rounded-circle border-0" id="sidebarToggle" onClick={handleToggleSidebar}>
@@ -1029,9 +1214,11 @@ const Productslist = () => {
                  
 
 
-                    <Form.Group  id="form-search" className="mb-3" controlId="formBasicEmail">
-                        <Form.Control  type="text" placeholder=" Search..." value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} />
-                    </Form.Group>
+                 <Form.Group id="form-search" className="mb-3" controlId="formBasicEmail">
+                  <Form.Control type="text" placeholder="Search..." value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} />
+                </Form.Group>
+
+
                     </Form>
                   </div>
                   <div className="card-body">
@@ -1044,6 +1231,7 @@ const Productslist = () => {
                         <FontAwesomeIcon icon={faFileExcel}  style={{ color: "#ffffff" }} /> 
                          Reporte JT
                     </button>
+                    {filteredProducts.length > 0 || filteredProducts2.length > 0 ? (
                     <Table striped bordered hover>
                         <thead>
                             <tr>
@@ -1061,7 +1249,7 @@ const Productslist = () => {
                                 <tr>
                                     <td>{product.id_producto}</td>
                                     <td>{product.nombbre}</td>
-                                    <td>{product.precio}</td>
+                                    <td>Q.{product.precio}.00</td>
                                     <td>{product.stock <= product.stock_minimo ? <span style={{ color: 'red' }}>Stock mínimo alcanzado: {product.stock}</span> : product.stock}</td>
                                     <td>{product.stock_minimo}</td>
                                     <td>{product.id_ubicacion === 2 ? "Guatemala" : "Jutiapa"}</td>
@@ -1091,7 +1279,7 @@ const Productslist = () => {
                                 <tr>
                                     <td>{products2.id_producto}</td>
                                     <td>{products2.nombre}</td>
-                                    <td>{products2.precio}</td>
+                                    <td>Q.{products2.precio}.00</td>
                                     <td>{products2.stock <= products2.stock_minimo ? <span style={{ color: 'red' }}>Stock mínimo alcanzado: {products2.stock}</span> : products2.stock}</td>
                                     <td>{products2.stock_minimo}</td>
                                     <td>{products2.id_ubicacion === 2 ? "Guatemala" : "Jutiapa"}</td>
@@ -1117,6 +1305,9 @@ const Productslist = () => {
                             ))}
                         </tbody>
                     </Table>
+                    ) : (
+                      <p style={{fontSize:"1.5rem",textAlign:"center"}}>Producto no encontrado...</p>
+                    )}
                     </div>
                   </div>
                 </div>

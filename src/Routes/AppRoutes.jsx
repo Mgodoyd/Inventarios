@@ -7,6 +7,7 @@ import ProtectRoute from './ProtectRoute';
 import Productslist from '../components/Administrador/Productslist';
 import Movimientos from '../components/Administrador/Movimientos';
 import UpdatePassword from '../components/Login/UpdatePassword';
+import BitacoraEliminar from '../components/Administrador/BitacoraEliminar';
 
 const AppRoutes = () => {
  return( 
@@ -20,6 +21,7 @@ const AppRoutes = () => {
         <Route index element={<Admin />} />
         <Route path="tables" element={<Productslist />} />
         <Route path="movimientos" element={<Movimientos />} />
+         <Route path="bitacora" element={<BitacoraEliminar />} />
      </Route>
   </Routes>
   );

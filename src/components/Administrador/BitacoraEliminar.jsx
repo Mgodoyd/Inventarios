@@ -1,70 +1,55 @@
-import React from 'react';
-import  { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLaughWink } from '@fortawesome/free-solid-svg-icons';
-import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
-import { faTable } from '@fortawesome/free-solid-svg-icons';
-import { faCircleDot } from '@fortawesome/free-solid-svg-icons';
-import './img/undraw_profile_2.png';
-import { useState } from 'react';
+import { faLaughWink, faTachometerAlt, faTable, faCircleDot } from '@fortawesome/free-solid-svg-icons';
 import Table from 'react-bootstrap/Table';
-import { useEffect } from 'react';
-//import '../Administrador/css/sb-admin-2.min.css';
-const Movimientos = () => {
-    const [showLogout, setShowLogout] = useState(false);
-    const navigate = useNavigate();
-    const [data, setData] = useState([]); // Variable de estado para almacenar los datos obtenidos
-    const [data2, setData2] = useState([]);
+import './img/undraw_profile_2.png';
 
+const BitacoraEliminar = () => {
+  const [showLogout, setShowLogout] = useState(false);
+  const navigate = useNavigate();
+  const [data, setData] = useState([]);
+  const [data2, setData2] = useState([]);
 
-    useEffect(() => {
-      fetch("https://analisis-sistemas.azurewebsites.net/api/getmovimientosgt")
-        .then((response) => response.json())
-        .then((data) => {
-          setData(data); // Asignar los datos obtenidos a la variable de estado
-          console.log(data);
-        });
-    }, []);
+  useEffect(() => {
+    fetch("https://analisis-sistemas.azurewebsites.net/api/bitacoradelete")
+      .then((response) => response.json())
+      .then((data) => {
+        setData(data.products); // Asigna la primera lista a data
+       setData2(data.products2); // Asigna la segunda lista a data2
+        console.log(data.products);
+      });
+  }, []);
 
-    useEffect(() => {
-        fetch("https://analisis-sistemas.azurewebsites.net/api/getmovimientosjt")
-          .then((response) => response.json())
-          .then((data2) => {
-            setData2(data2); // Asignar los datos obtenidos a la variable de estado
-            console.log(data2);
-          });
-      }, []);
+  const handleToggleSidebar = () => {
+    const sidebar = document.querySelector(".mySidebar");
+    sidebar.classList.toggle("toggled");
+  };
 
-    
-      
-      const handleToggleSidebar = () => {
-        const sidebar = document.querySelector(".mySidebar");
-        sidebar.classList.toggle("toggled");
-      };
-    
-      const tablespage = () => {
-        navigate('/admin/tables');
-      };
-    
-      const handleLogout = () => {
-        localStorage.removeItem('user');
-        navigate('/');
-      };
-    
-      const handleDropdown = () => {
-        setShowLogout(!showLogout);
-      }
-      const pageinicio = () => {
-          navigate('/admin');
-          };
-  
-      const movimiento = () => {
-          navigate('/admin/movimientos');
-          };
+  const tablespage = () => {
+    navigate('/admin/tables');
+  };
 
-      const eliminacion = () => {
-           navigate('/admin/bitacora');
-         };
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/');
+  };
+
+  const handleDropdown = () => {
+    setShowLogout(!showLogout);
+  };
+
+  const pageinicio = () => {
+    navigate('/admin');
+  };
+
+  const movimiento = () => {
+    navigate('/admin/movimientos');
+  };
+  const eliminacion = () => {
+    navigate('/admin/bitacora');
+  };
+
 
     return (
         <div id="wrapper">
@@ -156,33 +141,31 @@ const Movimientos = () => {
       <div className="container-fluid">
                 <div className="card shadow mb-4">
                   <div className="card-header py-3">
-                      <span className='titletable'>Movimientos Guatemala:</span> 
+                      <span className='titletable'>Bitácora de Eliminación de Productos:</span> 
                   </div>
                   
                     <Table striped bordered hover>
                         <thead>
                             <tr>
-                                <th>ID</th>
                                 <th>Id Producto</th>
-                                <th>Usuario</th>
-                                <th>Ubicación</th>
-                                <th>Cantidad Movida</th>
-                                <th>Almacén Enviando</th>
-                                <th>Almacén Recibiendo</th>
+                                <th>Producto</th>
+                                <th>Fecha Eliminación</th>
                             </tr>
                         </thead>
                         <tbody>
-                        {data.map((movimiento) => (
-                            <tr key={movimiento.id_movimiento}>
-                                <td>{movimiento.id_movimiento}</td>
-                                <td>{movimiento.id_producto}</td>
-                                <td>{movimiento.id_usuario === 1 ? "Operador" : "Administrador"}</td>
-                                <td>{movimiento.id_ubicacion === 2 ? "Guatemala" : "Jutiapa"}</td>
-                                <td>{movimiento.cantidad_movidad}</td>
-                                <td>{movimiento.ubicacion_almacen_anterior}</td>
-                                <td>{movimiento.ubicacion_almacen_nuevo}</td>
+                            {Array.isArray(data) ? (
+                            data.map((product) => (
+                                <tr key={product.id_producto}>
+                                <td>{product.id_producto}</td>
+                                <td>{product.nombre_producto}</td>
+                                <td>{product.fecha}</td>
+                                </tr>
+                            ))
+                            ) : (
+                            <tr>
+                                <td colSpan="3">No se encontraron datos</td>
                             </tr>
-                        ))}
+                            )}
                         </tbody>
                     </Table>
                     </div>
@@ -198,29 +181,27 @@ const Movimientos = () => {
                   
                     <Table striped bordered hover>
                         <thead>
-                            <tr>
-                                <th>ID</th>
+                           <tr>
                                 <th>Id Producto</th>
-                                <th>Usuario</th>
-                                <th>Ubicación</th>
-                                <th>Cantidad Movida</th>
-                                <th>Almacén Enviando</th>
-                                <th>Almacén Recibiendo</th>
+                                <th>Producto</th>
+                                <th>Fecha Eliminación</th>
                             </tr>
                         </thead>
                         <tbody>
-                        {data2.map((movimientos) => (
-                            <tr key={movimientos.id_movimiento}>
-                                <td>{movimientos.id_movimiento}</td>
-                                <td>{movimientos.id_producto}</td>
-                                <td>{movimientos.id_usuario === 1 ? "Operador" : "Administrador"}</td>
-                                <td>{movimientos.id_ubicacion === 2 ? "Guatemala" : "Jutiapa"}</td>
-                                <td>{movimientos.cantidad_movidad}</td>
-                                <td>{movimientos.ubicacion_almacen_anterior}</td>
-                                <td>{movimientos.ubicacion_almacen_nuevo}</td>
+                            {Array.isArray(data2) ? (
+                            data2.map((products2) => (
+                                <tr key={products2.id_producto}>
+                                <td>{products2.id_producto}</td>
+                                <td>{products2.nombre_producto}</td>
+                                <td>{products2.fecha}</td>
+                                </tr>
+                            ))
+                            ) : (
+                            <tr>
+                                <td colSpan="3">No se encontraron datos</td>
                             </tr>
-                        ))}
-                        </tbody>
+                            )}
+          </tbody>
                     </Table>
                     </div>
                   </div>
@@ -228,8 +209,7 @@ const Movimientos = () => {
                 </div>
 
       </div>
-        
     );
 }
 
-export default Movimientos;
+export default BitacoraEliminar;

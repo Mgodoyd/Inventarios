@@ -1,26 +1,72 @@
 import React, { useState } from 'react';
 import { Form, Button, Image } from 'react-bootstrap';
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 const UpdatePassword = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repeatpassword, setRepeatPassword] = useState('');
   const [submitButtonClicked, setSubmitButtonClicked] = useState(false);
+  const navigate = useNavigate(); // Add this line to access the navigate function
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Set the submitButtonClicked state to true to indicate that the submit button was clicked
     setSubmitButtonClicked(true);
 
-    // Handle form submission logic here
-    // You can access the entered email, password, and repeatpassword values using the respective variables
+    const confirmed = await Swal.fire({
+      title: '¿Estás seguro de actualizar la contraseña?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true
+    });
+
+    if (confirmed.isConfirmed) {
+      const Conexion = async () => {   
+        const apiUrl = `https://analisis-sistemas.azurewebsites.net/api/updatepassword?correo=${email}&password=${password}`;
+
+        const formData = { correo: email, password: password };
+        try {
+          // Envía una petición POST al servidor con los datos del formulario
+          const response = await fetch(apiUrl, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+          });
+
+          // Hacer algo con la respuesta del servidor aquí
+          console.log(response);
+
+          if (response.status === 400) {
+            // Mostrar mensaje de error si el usuario no existe
+            Swal.fire('Email no existe', '', 'error');
+          } else if (response.status === 200) {
+            // Mostrar alerta de éxito si la contraseña se actualizó correctamente
+            Swal.fire('Contraseña actualizada', '', 'success').then(() => {
+              navigate('/'); // Redirect to the login page
+            });
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+      // Invoca la función de conexión
+      await Conexion();
+    }
 
     // Clear form fields after submission
     setEmail('');
     setPassword('');
     setRepeatPassword('');
   };
+  
 
   return (
     <div className='container-form'>
@@ -68,6 +114,7 @@ const UpdatePassword = () => {
       </Form>
     </div>
   );
+
 };
 
 export default UpdatePassword;

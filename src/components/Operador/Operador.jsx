@@ -10,6 +10,8 @@ import Form from 'react-bootstrap/Form';
 import { useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import Card from 'react-bootstrap/Card';
+import Placeholder from 'react-bootstrap/Placeholder';
 
 
 const Operador = () => {
@@ -18,12 +20,31 @@ const Operador = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState([]);
   const [products2, setProducts2] = useState([]);
+  const [loading, setLoading] = useState(true); // Estado para controlar la carga de los productos
+  
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        // Simulación de una demora de 2 segundos para obtener los productos
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Obtiene los productos del servidor
+        const fetchedProducts = []; // Aquí debes hacer la solicitud al servidor para obtener los productos
+        setProducts(fetchedProducts);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error al obtener los productos:', error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
     navigate('/');
   }
-
+  
   const handleToggleSidebar = () => {
     const sidebar = document.querySelector(".mySidebar");
     sidebar.classList.toggle("toggled");
@@ -104,18 +125,33 @@ useEffect(() => {
   const MovimientoStock = async (id) => {
     try {
       const data1 = await getProductoGT(id);
-
+  
       console.log(data1);
-
+  
+      let stockresto = 0;
+  
       if (!data1) {
         console.log('La respuesta es undefined o null');
         return;
       }
-
-      const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/gtdel/${id}`, {
+  
+      const { value: formValues } = await Swal.fire({
+        title: 'Stock a Enviar',
+        html: `
+          <input id="swal-input1" class="swal2-input" value="${stockresto}" required>
+        `,
+        focusConfirm: false,
+        preConfirm: () => {
+          stockresto = document.getElementById('swal-input1').value;
+          return [stockresto];
+        }
+      });
+  
+      console.log(formValues);
+      const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/gtdel/${id}?stockresto=${stockresto}`, {
         method: 'DELETE',
       });
-    
+  
       if (response.status !== 404) {
         Swal.fire({
           title: '¡Éxito!',
@@ -126,16 +162,16 @@ useEffect(() => {
           window.location.reload();
         }, 1000);
         console.log(response);
-      }else{
+      } else {
         Swal.fire({
           title: 'error!',
           text: 'No existe stock para Enviar',
           icon: 'error'
         });
       }
-      
-   //  window.location.reload();
-     console.log(response);
+  
+      //  window.location.reload();
+      console.log(response);
     } catch (error) {
       console.error(error);
       Swal.fire({
@@ -143,10 +179,8 @@ useEffect(() => {
         text: 'No se pudo realizar el movimiento de stock.',
         icon: 'error'
       });
-      
     }
-
-  }
+  };
 
   const getProductoJt = async (id) => {
     const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/jt/${id}`);
@@ -161,12 +195,28 @@ useEffect(() => {
 
       console.log(data1);
 
+      let stockresto = 0;
+
       if (!data1) {
         console.log('La respuesta es undefined o null');
         return;
       }
 
-      const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/jtdel/${id}`, {
+      const { value: formValues } = await Swal.fire({
+        title: 'Stock a Enviar',
+        html: `
+          <input id="swal-input1" class="swal2-input" value="${stockresto}" required>
+        `,
+        focusConfirm: false,
+        preConfirm: () => {
+          stockresto = document.getElementById('swal-input1').value;
+          return [stockresto];
+        }
+      });
+  
+      console.log(formValues);
+
+      const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/jtdel/${id}?stockresto=${stockresto}`, {
         method: 'DELETE',
       });
       if (response.status !== 404) {
@@ -254,60 +304,61 @@ useEffect(() => {
       });
     }
   };
+
   
-  const enviarProductoJt = async (id) => {
-    const { value: formValues } = await Swal.fire({
-      title: 'Enviar Producto a Cliente',
-      html: `
-        <input id="swal-input1" class="swal2-input" required>
-      `,
-    });
-   
-    console.log(formValues);
-    const cantidad = document.getElementById('swal-input1').value;
-  
-    try {
-      const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/stockjt/${id}?cantidad=${cantidad}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        }
+    const enviarProductoJt = async (id) => {
+      const { value: formValues } = await Swal.fire({
+        title: 'Enviar Producto a Cliente',
+        html: `
+          <input id="swal-input1" class="swal2-input" required>
+        `,
       });
-      
-      console.log(response);
-      
-      if (response.ok) {
-        Swal.fire({
-          title: '¡Éxito!',
-          text: 'Productos Envidados a Cliente.',
-          icon: 'success'
+     
+      console.log(formValues);
+      const cantidad = document.getElementById('swal-input1').value;
+    
+      try {
+        const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/stockjt/${id}?cantidad=${cantidad}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         });
+        
+        console.log(response);
+        
+        if (response.ok) {
+          Swal.fire({
+            title: '¡Éxito!',
+            text: 'Productos Envidados a Cliente.',
+            icon: 'success'
+          });
 
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
 
-      } else {
-        const errorData = await response.json();
-        // Aquí puedes hacer algo con el objeto `errorData` que contiene información detallada sobre el error
-        console.error('Error:', errorData);
-  
+        } else {
+          const errorData = await response.json();
+          // Aquí puedes hacer algo con el objeto `errorData` que contiene información detallada sobre el error
+          console.error('Error:', errorData);
+    
+          Swal.fire({
+            title: '¡Error!',
+            text: 'No se pudo enviar los productos.',
+            icon: 'error'
+          });
+        }
+      } catch (error) {
+        console.error(error);
         Swal.fire({
           title: '¡Error!',
-          text: 'No se pudo enviar los productos.',
+          text: 'No hay stock disponible para enviar.',
           icon: 'error'
         });
       }
-    } catch (error) {
-      console.error(error);
-      Swal.fire({
-        title: '¡Error!',
-        text: 'No hay stock disponible para enviar.',
-        icon: 'error'
-      });
-    }
-  };
-  console.log(enviarProductoJt);
+    };
+
 
 
   return (
@@ -318,7 +369,7 @@ useEffect(() => {
             <div className="sidebar-brand-icon rotate-n-15">
               <FontAwesomeIcon icon={ faLaughWink } size="2x" style={{color: "#ffffff",}} />
             </div>
-            <div className="sidebar-brand-text mx-3">Inventario - SCRUM <sup>2</sup></div>
+            <div className="sidebar-brand-text mx-3"> Inventario - SCRUM<sup>2</sup></div>
           </a>
 
           <hr className="sidebar-divider my-0" />
@@ -327,7 +378,7 @@ useEffect(() => {
 
           <hr className="sidebar-divider" />
 
-          <div className="sidebar-heading">
+          <div className="sidebar-headingop">
             Existencia:
           </div>
 
@@ -402,52 +453,73 @@ useEffect(() => {
                     </Form>
                   </div>
                   <div className="cards_total">
-                      {filteredProducts.map(product => (
-                        <div className="cards" key={product.id}>
-                          <div className="imagen">
-                          <img src={ `data:image/png;base64,${product.image}`} alt={product.nombre} key={product.id} onError={() => console.log("Error al cargar la imagen")} />
-
-
-
-
-
-                          </div>
-                          <h2>Producto : {product.nombbre}</h2>
-                          <p>Precio : Q {product.precio}.00</p>
-                          <p> {product.stock <= product.stock_minimo ? (
-                          <p style={{ color: 'red' }}>Stock Disponible: {product.stock}</p>
-                        ) : (
-                          <p>Stock Disponible: {product.stock}</p>
-                        )}</p>
-                          <p>Almacén : {product.id_ubicacion === 2 ? "Guatemala" : "Jutiapa"}</p>
-                          <button className="updatestock"onClick={() => MovimientoStock(product.id_producto)}>Enviar stock</button>
-                          <button className='buttonstockoperador' onClick={() => enviarProductoGt(product.id_producto)}>
+      {filteredProducts.map(product => (
+        <div className="cards" key={product.id}>
+          <div className="imagen">
+            {loading ? (
+              <Placeholder as={Card.Img} animation="glow">
+                <Placeholder xs={6} />
+              </Placeholder>
+            ) : (
+              <img
+                src={`data:image/png;base64,${product.image}`}
+                alt={product.nombre}
+                key={product.id}
+                onError={() => console.log("Error al cargar la imagen")}
+              />
+            )}
+          </div>
+          <h2>Producto : {product.nombbre}</h2>
+          <p>Precio : Q {product.precio}.00</p>
+          <p>
+            {product.stock <= product.stock_minimo ? (
+              <p style={{ color: 'red' }}>Stock Disponible: {product.stock}</p>
+            ) : (
+              <p>Stock Disponible: {product.stock}</p>
+            )}
+          </p>
+          <p>Almacén : {product.id_ubicacion === 2 ? "Guatemala" : "Jutiapa"}</p>
+          <button className="updatestock" onClick={() => MovimientoStock(product.id_producto)}>Enviar stock</button>
+          <button className='buttonstockoperador' onClick={() => enviarProductoGt(product.id_producto)}>
                                         <FontAwesomeIcon icon={faPaperPlane}  style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
                                             Enviar Cliente
                                         </button>
-                        </div>
-                      ))}
-                      {filteredProducts2.map(products2 => (
-                        <div className="cards" key={products2.id}>
-                           <div className="imagen">
-                           <img src={ `data:image/png;base64,${products2.image}`} alt={products2.nombre} key={products2.id} onError={() => console.log("Error al cargar la imagen")} />
-                          </div>
-                          <h2>Producto : {products2.nombre}</h2>
-                          <p>Precio : Q {products2.precio}.00</p>
-                          <p> {products2.stock <= products2.stock_minimo ? (
-                            <p style={{ color: 'red' }}>Stock Disponible: {products2.stock}</p>
-                          ) : (
-                            <p>Stock Disponible: {products2.stock}</p>
-                          )}</p>
-                          <p>Almacén : {products2.id_ubicacion === 2 ? "Guatemala" : "Jutiapa"}</p>
-                          <button className="updatestock" onClick={() => MovimientoStockJt(products2.id_producto)}>Enviar stock</button>
-                          <button className='buttonstockoperador' onClick={() => enviarProductoGt(products2.id_producto)}>
+        </div>
+      ))}
+      {filteredProducts2.map(products2 => (
+        <div className="cards" key={products2.id}>
+          <div className="imagen">
+            {loading ? (
+              <Placeholder as={Card.Img} animation="glow">
+                <Placeholder xs={6} />
+              </Placeholder>
+            ) : (
+              <img
+                src={`data:image/png;base64,${products2.image}`}
+                alt={products2.nombre}
+                key={products2.id}
+                onError={() => console.log("Error al cargar la imagen")}
+              />
+            )}
+          </div>
+          <h2>Producto : {products2.nombre}</h2>
+          <p>Precio : Q {products2.precio}.00</p>
+          <p>
+            {products2.stock <= products2.stock_minimo ? (
+              <p style={{ color: 'red' }}>Stock Disponible: {products2.stock}</p>
+            ) : (
+              <p>Stock Disponible: {products2.stock}</p>
+            )}
+          </p>
+          <p>Almacén : {products2.id_ubicacion === 2 ? "Guatemala" : "Jutiapa"}</p>
+          <button className="updatestock" onClick={() => MovimientoStockJt(products2.id_producto)}>Enviar stock</button>
+          <button className='buttonstockoperador' onClick={() => enviarProductoJt(products2.id_producto)}>
                                         <FontAwesomeIcon icon={faPaperPlane}  style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
                                             Enviar Cliente
                                         </button>
-                        </div>
-                      ))}
-                    </div>
+        </div>
+      ))}
+    </div>
                 </div>
               </div>
       <footer className="sticky-footer bg-white">

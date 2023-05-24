@@ -217,19 +217,22 @@ const Administrador = () => {
       setMovimientos([...movimientos, movimiento]);
     };*/
     
+    const eliminacion = () => {
+      navigate('/admin/bitacora');
+      };
 
   return (
     <>
       <div id="wrapper">
-        <ul className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion mySidebar">
+        <ul id='listado' className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion mySidebar">
           <a className="sidebar-brand d-flex align-items-center justify-content-center" href="/">
             <div className="sidebar-brand-icon rotate-n-15">
-              <FontAwesomeIcon icon={ faLaughWink } size="2x" style={{color: "#ffffff",}} />
+              <FontAwesomeIcon icon={ faLaughWink } size="2x" style={{color: "#ffffff",left:"5%"}} />
             </div>
-            <div className="sidebar-brand-text mx-3">Inventario - SCRUM <sup>2</sup></div>
+            <div className="sidebar-brand-text mx-3"> Inventario - SCRUM<sup>2</sup></div>
           </a>
 
-          <hr className="sidebar-divider my-0" />
+          
 
           <li className="nav-item active">
             <a className="nav-link" href=" " onClick={pageinicio}>
@@ -238,7 +241,7 @@ const Administrador = () => {
             </a>
           </li>
 
-          <hr className="sidebar-divider" />
+       
 
           <div className="sidebar-heading">
             Existencia:
@@ -247,7 +250,7 @@ const Administrador = () => {
           <li className="nav-item">
             <a className="nav-link" href=" " onClick={tablespage}>
               <FontAwesomeIcon icon={faTable} style={{color: "#ffffff",}} />
-              <span style={{marginLeft:"10px"}}>Listado de productos</span>
+              <span  style={{marginLeft:"10px"}}>Listado de productos</span>
             </a>
           </li>
 
@@ -255,14 +258,21 @@ const Administrador = () => {
             Stock:
           </div>
 
-          <li className="nav-item">
+          <li className="nav-item"  >
             <a className="nav-link" href=" " onClick={movimiento}>
-              <FontAwesomeIcon icon={faTable} style={{color: "#ffffff",}} />
+              <FontAwesomeIcon icon={faTable} style={{color: "#ffffff"}} />
               <span style={{marginLeft:"10px"}}>Movimientos</span>
             </a>
           </li>
 
-          <hr className="sidebar-divider d-none d-md-block"></hr>
+          <li className="nav-item">
+            <a className="nav-link" href=" " onClick={eliminacion}>
+              <FontAwesomeIcon icon={faTable} style={{color: "#ffffff",}} />
+              <span style={{marginLeft:"10px"}}>Bitácora Eliminación</span>
+            </a>
+          </li>
+
+         
 
           <div className="text-center d-none d-md-inline">
             <button className="rounded-circle border-0" id="sidebarToggle" onClick={handleToggleSidebar}>
