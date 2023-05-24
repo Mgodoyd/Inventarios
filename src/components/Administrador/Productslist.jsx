@@ -509,16 +509,16 @@ const Productslist = () => {
     const MovimientoStockJt = async (id) => {
       try {
         const data1 = await getProductoJt(id);
-
+  
         console.log(data1);
-
+  
         let stockresto = 0;
-
+  
         if (!data1) {
           console.log('La respuesta es undefined o null');
           return;
         }
-
+  
         const { value: formValues } = await Swal.fire({
           title: 'Stock a Enviar',
           html: `
@@ -532,7 +532,12 @@ const Productslist = () => {
         });
     
         console.log(formValues);
-
+  
+        const stockDisponible = data1[0].stock;
+        console.log(stockDisponible);
+    
+        if (parseInt(stockresto) <= stockDisponible) {
+  
         const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/jtdel/${id}?stockresto=${stockresto}`, {
           method: 'DELETE',
         });
@@ -553,7 +558,14 @@ const Productslist = () => {
             icon: 'error'
           });
         }
-        console.log(response);
+      } else {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Stock insuficiente',
+          icon: 'error'
+        });
+      }
+        
       } catch (error) {
         console.error(error);
         Swal.fire({
@@ -563,7 +575,7 @@ const Productslist = () => {
         });
         
       }
-
+  
     }
 
 
@@ -594,30 +606,43 @@ const Productslist = () => {
         });
     
         console.log(formValues);
-        const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/gtdel/${id}?stockresto=${stockresto}`, {
-          method: 'DELETE',
-        });
     
-        if (response.status !== 404) {
-          Swal.fire({
-            title: '¡Éxito!',
-            text: 'Movimiento de Stock correctamente.',
-            icon: 'success'
+        const stockDisponible = data1[0].stock;
+        console.log(stockDisponible);
+    
+        if (parseInt(stockresto) <= stockDisponible) {
+          console.log(stockresto);
+          const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/gtdel/${id}?stockresto=${stockresto}`, {
+            method: 'DELETE',
           });
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-          console.log(response);
+    
+          if (response.status !== 404) {
+            Swal.fire({
+              title: '¡Éxito!',
+              text: 'Movimiento de Stock correctamente.',
+              icon: 'success'
+            });
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+            console.log(response);
+          } else {
+            Swal.fire({
+              title: 'Error!',
+              text: 'No existe stock para enviar',
+              icon: 'error'
+            });
+          }
         } else {
           Swal.fire({
-            title: 'error!',
-            text: 'No existe stock para Enviar',
+            title: 'Error!',
+            text: 'Stock insuficiente',
             icon: 'error'
           });
         }
     
         //  window.location.reload();
-        console.log(response);
+      //  console.log(response);
       } catch (error) {
         console.error(error);
         Swal.fire({
@@ -834,18 +859,34 @@ const Productslist = () => {
  
 
     const enviarProductoGt = async (id) => {
+
+      const data1 = await getProductoGT(id);
+  
+      console.log(data1);
+  
+      
+  
+      if (!data1) {
+        console.log('La respuesta es undefined o null');
+        return;
+      }
+  
       const { value: formValues } = await Swal.fire({
         title: 'Enviar Producto a Cliente',
         html: `
           <input id="swal-input1" class="swal2-input" required>
         `,
       });
-
+  
       console.log(formValues);
     
       const cantidad = document.getElementById('swal-input1').value;
     
       try {
+  
+        const stockDisponible = data1[0].stock;
+        console.log(stockDisponible);
+        if (parseInt(cantidad) <= stockDisponible) {
         const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/stockgt/${id}?cantidad=${cantidad}`, {
           method: 'DELETE',
           headers: {
@@ -861,11 +902,11 @@ const Productslist = () => {
             text: 'Productos Envidados a Cliente.',
             icon: 'success'
           });
-
+  
           setTimeout(() => {
             window.location.reload();
           }, 1000);
-
+  
         } else {
           const errorData = await response.json();
           // Aquí puedes hacer algo con el objeto `errorData` que contiene información detallada sobre el error
@@ -877,6 +918,13 @@ const Productslist = () => {
             icon: 'error'
           });
         }
+      } else {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Stock insuficiente',
+          icon: 'error'
+        });
+      }
       } catch (error) {
         console.error(error);
         Swal.fire({
@@ -891,6 +939,18 @@ const Productslist = () => {
 
     
     const enviarProductoJt = async (id) => {
+
+      const data1 = await getProductoJt(id);
+
+      console.log(data1);
+
+    
+
+      if (!data1) {
+        console.log('La respuesta es undefined o null');
+        return;
+      }
+  
       const { value: formValues } = await Swal.fire({
         title: 'Enviar Producto a Cliente',
         html: `
@@ -902,6 +962,9 @@ const Productslist = () => {
       const cantidad = document.getElementById('swal-input1').value;
     
       try {
+        const stockDisponible = data1[0].stock;
+        console.log(stockDisponible);
+        if (parseInt(cantidad) <= stockDisponible) {
         const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/stockjt/${id}?cantidad=${cantidad}`, {
           method: 'DELETE',
           headers: {
@@ -933,6 +996,13 @@ const Productslist = () => {
             icon: 'error'
           });
         }
+      } else {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Stock insuficiente',
+          icon: 'error'
+        });
+      }
       } catch (error) {
         console.error(error);
         Swal.fire({
@@ -942,7 +1012,6 @@ const Productslist = () => {
         });
       }
     };
-    
     
 
     const generarReporteGt = async () => {
