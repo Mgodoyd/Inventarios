@@ -10,8 +10,6 @@ import Form from 'react-bootstrap/Form';
 import { useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import Card from 'react-bootstrap/Card';
-import Placeholder from 'react-bootstrap/Placeholder';
 
 
 const Operador = () => {
@@ -20,26 +18,8 @@ const Operador = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState([]);
   const [products2, setProducts2] = useState([]);
-  const [loading, setLoading] = useState(true); // Estado para controlar la carga de los productos
   
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        // Simulación de una demora de 2 segundos para obtener los productos
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // Obtiene los productos del servidor
-        const fetchedProducts = []; // Aquí debes hacer la solicitud al servidor para obtener los productos
-        setProducts(fetchedProducts);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error al obtener los productos:', error);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
+ 
   const handleLogout = () => {
     localStorage.removeItem('user');
     navigate('/');
@@ -527,20 +507,12 @@ useEffect(() => {
                   <div className="cards_total">
       {filteredProducts.map(product => (
         <div className="cards" key={product.id}>
-          <div className="imagen">
-            {loading ? (
-              <Placeholder as={Card.Img} animation="glow">
-                <Placeholder xs={6} />
-              </Placeholder>
-            ) : (
-              <img
+          
+         <img className='imgcard'
                 src={`data:image/png;base64,${product.image}`}
                 alt={product.nombre}
-                key={product.id}
                 onError={() => console.log("Error al cargar la imagen")}
               />
-            )}
-          </div>
           <h2>Producto : {product.nombbre}</h2>
           <p>Precio : Q {product.precio}.00</p>
           <p>
@@ -560,20 +532,13 @@ useEffect(() => {
       ))}
       {filteredProducts2.map(products2 => (
         <div className="cards" key={products2.id}>
-          <div className="imagen">
-            {loading ? (
-              <Placeholder as={Card.Img} animation="glow">
-                <Placeholder xs={6} />
-              </Placeholder>
-            ) : (
-              <img
+          
+              <img className='imgcard'
                 src={`data:image/png;base64,${products2.image}`}
                 alt={products2.nombre}
                 key={products2.id}
                 onError={() => console.log("Error al cargar la imagen")}
               />
-            )}
-          </div>
           <h2>Producto : {products2.nombre}</h2>
           <p>Precio : Q {products2.precio}.00</p>
           <p>
