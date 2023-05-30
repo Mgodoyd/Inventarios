@@ -104,7 +104,7 @@
     cursor: pointer;
     transition: 0.5s;
     padding: 8px;
-    margin-left: 5%;
+    margin-left: 3%;
     display: inline-block;
   }
   
@@ -137,7 +137,7 @@
     cursor: pointer;
     transition: 0.5s;
     padding: 8px;
-    margin-left: 8%;
+    margin-left: 2%;
     display: inline-block;
   }
   .buttonreporte{
@@ -148,7 +148,7 @@
     cursor: pointer;
     transition: 0.5s;
     padding: 10px;
-    margin-left: 50%;
+    margin-left: 47%;
     display: inline-block;
     margin-bottom: 15px;
     margin-top: -95px;
@@ -162,7 +162,7 @@
     cursor: pointer;
     transition: 0.5s;
     padding: 10px;
-    margin-left: 60%;
+    margin-left: 58%;
     display: inline-block;
     margin-bottom: 15px;
     margin-top: -95px;
@@ -193,3 +193,52 @@
   width: 100%;
   position: relative;
 }
+
+.buttonstock2{
+  background-color: #5672d8;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.5s;
+  padding: 7px;
+  margin-left: 5%;
+  display: inline-block;
+}
+.buttonstock3{
+  background-color: #5672d8;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.5s;
+  padding: 7px;
+  margin-left: 5%;
+  display: inline-block;
+}
+
+@media (min-width: 1300px) { /* Dispositivos medianos (laptops) */
+  .buttonstock2{
+    background-color: #5672d8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.5s;
+    padding: 7px;
+    margin-left: .85%;
+    display: inline-block;
+  }
+  .buttonstock3{
+    background-color: #5672d8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.5s;
+    padding: 7px;
+    margin-left: .85%;
+    display: inline-block;
+  }
+}
+

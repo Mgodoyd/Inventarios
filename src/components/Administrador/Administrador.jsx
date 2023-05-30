@@ -392,7 +392,7 @@ const Administrador = () => {
 
          
 
-          <div style={{ width: '75%', marginTop:"-405px"}}>
+          <div style={{ width: '75%', marginTop:"-25%"}}>
       <h2 style={{ fontSize: '20px' }}>Gráfica Guatemala</h2>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart
@@ -413,7 +413,7 @@ const Administrador = () => {
       </ResponsiveContainer>
     </div>
     
-    <div style={{ width: '75%', marginTop:"-218px",paddingTop:"2%" }}>
+    <div style={{ width: '75%', marginTop:"-5.5%" }}>
       <h2 style={{ fontSize: '20px' }}>Gráfica Jutiapa</h2>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart

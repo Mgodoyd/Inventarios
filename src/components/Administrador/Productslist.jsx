@@ -1335,7 +1335,7 @@ const Productslist = () => {
                                             <FontAwesomeIcon icon={faPlus} style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
                                             Stock
                                         </button>
-                                        <button className='buttonstock' onClick={() => enviarProductoGt(product.id_producto)}>
+                                        <button className='buttonstock2' onClick={() => enviarProductoGt(product.id_producto)}>
                                         <FontAwesomeIcon icon={faPaperPlane}  style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
                                             Enviar Cliente 
                                         </button>
@@ -1343,7 +1343,7 @@ const Productslist = () => {
                                 </tr>
                             ))}
                         </tbody>
-                        <tbody>
+                        <tbody> 
                         {filteredProducts2.map((products2) => (
                                 <tr>
                                     <td>{products2.id_producto}</td>
@@ -1365,7 +1365,7 @@ const Productslist = () => {
                                             <FontAwesomeIcon icon={faPlus} style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
                                             Stock
                                         </button>
-                                        <button className='buttonstock' onClick={() => enviarProductoJt(products2.id_producto)}>
+                                        <button className='buttonstock3' onClick={() => enviarProductoJt(products2.id_producto)}>
                                             <FontAwesomeIcon icon={faPaperPlane}  style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
                                             Enviar Cliente
                                         </button>
