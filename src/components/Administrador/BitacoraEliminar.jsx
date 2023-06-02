@@ -141,7 +141,7 @@ const BitacoraEliminar = () => {
       <div className="container-fluid">
                 <div className="card shadow mb-4">
                   <div className="card-header py-3">
-                      <span className='titletable'>Bitácora de Eliminación de Productos:</span> 
+                      <span className='titletable'>Bitácora de Eliminación de Productos Guatemala:</span> 
                   </div>
                   
                     <Table striped bordered hover>
@@ -176,7 +176,7 @@ const BitacoraEliminar = () => {
                   <div className="container-fluid">
                 <div className="card shadow mb-4">
                   <div className="card-header py-3">
-                      <span className='titletable'>Movimientos Jutiapa:</span> 
+                      <span className='titletable'>Bitácora de Eliminación de Productos Jutiapa:</span> 
                   </div>
                   
                     <Table striped bordered hover>

@@ -85,18 +85,6 @@ useEffect(() => {
     });
 }, []);
 
-  
-  /*const decodeToImage = (imageString) => {
-    const decodedData = atob(imageString);
-    const uint8Array = new Uint8Array(decodedData.length);
-    for (let i = 0; i < decodedData.length; ++i) {
-      uint8Array[i] = decodedData.charCodeAt(i);
-    }
-    const blob = new Blob([uint8Array], { type: "image/png" });
-    const imageUrl = URL.createObjectURL(blob);
-    return imageUrl;
-  };*/
-
   const getProductoGT = async (id) => {
     const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/gt/${id}`);
     const data = await response.json();
