@@ -121,7 +121,7 @@ useEffect(() => {
   
       const stockDisponible = data1[0].stock;
       console.log(stockDisponible);
-  
+                    //5              3
       if (parseInt(stockresto) <= stockDisponible) {
         console.log(stockresto);
         const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/gtdel/${id}?stockresto=${stockresto}`, {
@@ -493,26 +493,26 @@ useEffect(() => {
                     </Form>
                   </div>
                   <div className="cards_total">
-      {filteredProducts.map(product => (
-        <div className="cards" key={product.id}>
-          
-         <img className='imgcard'
-                src={`data:image/png;base64,${product.image}`}
-                alt={product.nombre}
-                onError={() => console.log("Error al cargar la imagen")}
-              />
-          <h2>Producto : {product.nombbre}</h2>
-          <p>Precio : Q {product.precio}.00</p>
-          <p>
-            {product.stock <= product.stock_minimo ? (
-              <p style={{ color: 'red' }}>Stock Disponible: {product.stock}</p>
-            ) : (
-              <p>Stock Disponible: {product.stock}</p>
-            )}
-          </p>
-          <p>Almacén : {product.id_ubicacion === 2 ? "Guatemala" : "Jutiapa"}</p>
-          <button className="updatestock" onClick={() => MovimientoStock(product.id_producto)}>Enviar stock</button>
-          <button className='buttonstockoperador' onClick={() => enviarProductoGt(product.id_producto)}>
+                            {filteredProducts.map(product => (
+                              <div className="cards" key={product.id}>
+                                
+                              <img className='imgcard'
+                                      src={`data:image/png;base64,${product.image}`}
+                                      alt={product.nombre}
+                                      onError={() => console.log("Error al cargar la imagen")}
+                                    />
+                                <h2>Producto : {product.nombbre}</h2>
+                                <p>Precio : Q {product.precio}.00</p>
+                                <p>
+                                  {product.stock <= product.stock_minimo ? (
+                                    <p style={{ color: 'red' }}>Stock Disponible: {product.stock}</p>
+                                  ) : (
+                                    <p>Stock Disponible: {product.stock}</p>
+                                  )}
+                                </p>
+                                <p>Almacén : {product.id_ubicacion === 2 ? "Guatemala" : "Jutiapa"}</p>
+                                <button className="updatestock" onClick={() => MovimientoStock(product.id_producto)}>Enviar stock</button>
+                                <button className='buttonstockoperador' onClick={() => enviarProductoGt(product.id_producto)}>
                                         <FontAwesomeIcon icon={faPaperPlane}  style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
                                             Enviar Cliente
                                         </button>

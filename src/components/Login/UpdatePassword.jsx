@@ -41,7 +41,7 @@ const UpdatePassword = () => {
           });
 
           // Hacer algo con la respuesta del servidor aquí
-          console.log(response);
+          //console.log(response);
 
           if (response.status === 400) {
             // Mostrar mensaje de error si el usuario no existe
