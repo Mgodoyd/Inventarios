@@ -8,7 +8,7 @@ import './Image.css';
 const Images = () => {
   return(
 <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
-  <Image src="./Images/logobatres.png" style={{width:"100%", height:"100%", objectFit: "cover"}} />
+  <Image src="./Images/fondo.jpg" style={{width:"100%", height:"100%", objectFit: "cover"}} />
   <div style={{
     position: 'absolute',
     display: 'inline-block',
