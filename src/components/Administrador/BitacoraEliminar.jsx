@@ -11,7 +11,7 @@ const BitacoraEliminar = () => {
   const [data, setData] = useState([]);
   const [data2, setData2] = useState([]);
 
-  useEffect(() => {
+  useEffect(() => { // Se ejecuta al inicio para obtener los datos de la API de la tabla bitacora de eliminacion
     fetch("https://analisis-sistemas.azurewebsites.net/api/bitacoradelete")
       .then((response) => response.json())
       .then((data) => {
@@ -21,32 +21,32 @@ const BitacoraEliminar = () => {
       });
   }, []);
 
-  const handleToggleSidebar = () => {
+  const handleToggleSidebar = () => { // Funcion para mostrar y ocultar el sidebar
     const sidebar = document.querySelector(".mySidebar");
     sidebar.classList.toggle("toggled");
   };
 
-  const tablespage = () => {
+  const tablespage = () => {// Funcion para navegar a la pagina de listado de productos
     navigate('/admin/tables');
   };
 
-  const handleLogout = () => {
+  const handleLogout = () => {// Funcion para cerrar sesion
     localStorage.removeItem('user');
     navigate('/');
   };
 
-  const handleDropdown = () => {
+  const handleDropdown = () => {// Funcion para mostrar y ocultar el dropdown
     setShowLogout(!showLogout);
   };
 
-  const pageinicio = () => {
+  const pageinicio = () => {// Funcion para navegar a la pagina de inicio
     navigate('/admin');
   };
 
-  const movimiento = () => {
+  const movimiento = () => {// Funcion para navegar a la pagina de movimientos
     navigate('/admin/movimientos');
   };
-  const eliminacion = () => {
+  const eliminacion = () => {// Funcion para navegar a la pagina de bitacora de eliminacion
     navigate('/admin/bitacora');
   };
 
@@ -61,16 +61,12 @@ const BitacoraEliminar = () => {
             <div className="sidebar-brand-text mx-3"> Inventario - SCRUM<sup>2</sup></div>
           </a>
 
-         
-
           <li className="nav-item active">
             <a className="nav-link" href=" " onClick={pageinicio}>
               <FontAwesomeIcon icon={faTachometerAlt} style={{color: "#ffffff",}} />
               <span style={{marginLeft:"10px"}}>Pantalla de inicio</span>
             </a>
           </li>
-
-        
 
           <div className="sidebar-heading">
             Existencia:
@@ -101,41 +97,38 @@ const BitacoraEliminar = () => {
             </a>
           </li>
 
-
-          
-
-          <div className="text-center d-none d-md-inline">
-            <button className="rounded-circle border-0" id="sidebarToggle" onClick={handleToggleSidebar}>
-            <FontAwesomeIcon icon={faCircleDot} size ="2x" style={{color: "#ffffff",marginTop: "2px",marginLeft:"-1.5px"}} />
-            </button>
-          </div>
-  </ul>
-
-  <div id="content-wrapper" className="d-flex flex-column">
-    <div id="content">
-      <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-        <form className="form-inline">
-          <button id="sidebarToggleTop" className="btn btn-link d-md-none rounded-circle mr-3">
-            <i className="fa fa-bars"></i>
-          </button>
-        </form>
-
-        <ul className="navbar-nav ml-auto">
-          <li className="nav-item dropdown">
-          <h2 className="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onClick={handleDropdown} style={{color: "#85929E"}}>
-            Administrador
-           <div className='img-logout'></div>
-          </h2>
-
-            <div className={`dropdown-menu ${showLogout ? 'show' : ''}`} aria-labelledby="navbarDropdown">
-              <div className="dropdown-divider"></div>
-              <a className="dropdown-item" href=" " onClick={handleLogout}>
-              <div className='logout'><span>Cerrar sesión</span></div>
-              </a>
+            <div className="text-center d-none d-md-inline">
+              <button className="rounded-circle border-0" id="sidebarToggle" onClick={handleToggleSidebar}>
+              <FontAwesomeIcon icon={faCircleDot} size ="2x" style={{color: "#ffffff",marginTop: "2px",marginLeft:"-1.5px"}} />
+              </button>
             </div>
-          </li>
-        </ul>
-      </nav>
+       </ul>
+
+      <div id="content-wrapper" className="d-flex flex-column">
+        <div id="content">
+          <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+            <form className="form-inline">
+              <button id="sidebarToggleTop" className="btn btn-link d-md-none rounded-circle mr-3">
+                <i className="fa fa-bars"></i>
+              </button>
+            </form>
+
+            <ul className="navbar-nav ml-auto">
+              <li className="nav-item dropdown">
+              <h2 className="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onClick={handleDropdown} style={{color: "#85929E"}}>
+                Administrador
+              <div className='img-logout'></div>
+              </h2>
+
+                <div className={`dropdown-menu ${showLogout ? 'show' : ''}`} aria-labelledby="navbarDropdown">
+                  <div className="dropdown-divider"></div>
+                  <a className="dropdown-item" href=" " onClick={handleLogout}>
+                  <div className='logout'><span>Cerrar sesión</span></div>
+                  </a>
+                </div>
+              </li>
+            </ul>
+        </nav>
 
 
       <div className="container-fluid">
@@ -170,9 +163,6 @@ const BitacoraEliminar = () => {
                     </Table>
                     </div>
                   </div>
-
-
-
                   <div className="container-fluid">
                 <div className="card shadow mb-4">
                   <div className="card-header py-3">
@@ -201,13 +191,12 @@ const BitacoraEliminar = () => {
                                 <td colSpan="3">No se encontraron datos</td>
                             </tr>
                             )}
-          </tbody>
+                         </tbody>
                     </Table>
                     </div>
                   </div>
                 </div>
-                </div>
-
+           </div>
       </div>
     );
 }

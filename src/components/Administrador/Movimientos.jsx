@@ -10,14 +10,14 @@ import { useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import { useEffect } from 'react';
 //import '../Administrador/css/sb-admin-2.min.css';
-const Movimientos = () => {
+const Movimientos = () => { //Componente para mostrar los movimientos de los productos en las dos ubicaciones
     const [showLogout, setShowLogout] = useState(false);
     const navigate = useNavigate();
     const [data, setData] = useState([]); // Variable de estado para almacenar los datos obtenidos
     const [data2, setData2] = useState([]);
 
 
-    useEffect(() => {
+    useEffect(() => { // Obtener los datos de la API usando fetch cuando el componente se monta por primera vez (similar a componentDidMount en componentes de clase) obtine los movimientos de la ubicacion de guatemala
       fetch("https://analisis-sistemas.azurewebsites.net/api/getmovimientosgt")
         .then((response) => response.json())
         .then((data) => {
@@ -26,7 +26,7 @@ const Movimientos = () => {
         });
     }, []);
 
-    useEffect(() => {
+    useEffect(() => {// Obtener los datos de la API usando fetch cuando el componente se monta por primera vez (similar a componentDidMount en componentes de clase) obtine los movimientos de la ubicacion de jutiapa
         fetch("https://analisis-sistemas.azurewebsites.net/api/getmovimientosjt")
           .then((response) => response.json())
           .then((data2) => {
@@ -37,32 +37,32 @@ const Movimientos = () => {
 
     
       
-      const handleToggleSidebar = () => {
+      const handleToggleSidebar = () => {//Funcion para mostrar y ocultar el sidebar
         const sidebar = document.querySelector(".mySidebar");
         sidebar.classList.toggle("toggled");
       };
     
-      const tablespage = () => {
+      const tablespage = () => {//Funcion para navegar a la pagina de listado de productos
         navigate('/admin/tables');
       };
     
-      const handleLogout = () => {
+      const handleLogout = () => {//Funcion para cerrar sesion
         localStorage.removeItem('user');
         navigate('/');
       };
     
-      const handleDropdown = () => {
+      const handleDropdown = () => {//Funcion para mostrar y ocultar el dropdown
         setShowLogout(!showLogout);
       }
-      const pageinicio = () => {
+      const pageinicio = () => {//Funcion para navegar a la pagina de inicio
           navigate('/admin');
           };
   
-      const movimiento = () => {
+      const movimiento = () => {//Funcion para navegar a la pagina de movimientos
           navigate('/admin/movimientos');
           };
 
-      const eliminacion = () => {
+      const eliminacion = () => {//Funcion para navegar a la pagina de bitacora
            navigate('/admin/bitacora');
          };
 
@@ -76,17 +76,12 @@ const Movimientos = () => {
             <div className="sidebar-brand-text mx-3"> Inventario - SCRUM<sup>2</sup></div>
           </a>
 
-         
-
           <li className="nav-item active">
             <a className="nav-link" href=" " onClick={pageinicio}>
               <FontAwesomeIcon icon={faTachometerAlt} style={{color: "#ffffff",}} />
               <span style={{marginLeft:"10px"}}>Pantalla de inicio</span>
             </a>
           </li>
-
-        
-
           <div className="sidebar-heading">
             Existencia:
           </div>
@@ -115,16 +110,12 @@ const Movimientos = () => {
               <span style={{marginLeft:"10px"}}>Bitácora Eliminación</span>
             </a>
           </li>
-
-
-          
-
           <div className="text-center d-none d-md-inline">
             <button className="rounded-circle border-0" id="sidebarToggle" onClick={handleToggleSidebar}>
             <FontAwesomeIcon icon={faCircleDot} size ="2x" style={{color: "#ffffff",marginTop: "2px",marginLeft:"-1.5px"}} />
             </button>
           </div>
-  </ul>
+     </ul>
 
   <div id="content-wrapper" className="d-flex flex-column">
     <div id="content">
@@ -151,8 +142,6 @@ const Movimientos = () => {
           </li>
         </ul>
       </nav>
-
-
       <div className="container-fluid">
                 <div className="card shadow mb-4">
                   <div className="card-header py-3">
@@ -187,9 +176,6 @@ const Movimientos = () => {
                     </Table>
                     </div>
                   </div>
-
-
-
                   <div className="container-fluid">
                 <div className="card shadow mb-4">
                   <div className="card-header py-3">
@@ -222,11 +208,10 @@ const Movimientos = () => {
                         ))}
                         </tbody>
                     </Table>
-                    </div>
-                  </div>
-                </div>
-                </div>
-
+                   </div>
+                 </div>
+              </div>
+          </div>
       </div>
         
     );

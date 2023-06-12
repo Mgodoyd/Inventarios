@@ -9,6 +9,7 @@ import Movimientos from '../components/Administrador/Movimientos';
 import UpdatePassword from '../components/Login/UpdatePassword';
 import BitacoraEliminar from '../components/Administrador/BitacoraEliminar';
 
+//Creamos las Rutas
 const AppRoutes = () => {
  return( 
  <Routes>

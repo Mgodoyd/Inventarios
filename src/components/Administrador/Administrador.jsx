@@ -14,12 +14,7 @@ import Chart from "chart.js/auto";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 
-
-
-
-
-
-const Administrador = () => {
+const Administrador = () => { // Se crea la funcion Administrador con  las constantes que se utilizaran en la pagina
   const [showLogout, setShowLogout] = useState(false);
   const [stockGt, setStockGt] = useState(0);
   const [stockJt, setStockJt] = useState(0);
@@ -34,12 +29,12 @@ const Administrador = () => {
   const [values, setValues] = useState([{ uv: 0 }]);
   
   
-  const handleToggleSidebar = () => {
+  const handleToggleSidebar = () => { // Funcion para mostrar y ocultar el sidebar
     const sidebar = document.querySelector(".mySidebar");
     sidebar.classList.toggle("toggled");
   };
  
-  useEffect(() => {
+  useEffect(() => { // Se ejecuta al inicio para obtener los datos de la API de la tabla stocktotalgt
     const fetchStockGt = async () => {
       try {
         const response = await fetch('https://analisis-sistemas.azurewebsites.net/api/stocktotalgt', {
@@ -59,7 +54,7 @@ const Administrador = () => {
     fetchStockGt();
   }, []);
 
-  useEffect(() => {
+  useEffect(() => { // Se ejecuta al inicio para obtener los datos de la API de la tabla stocktotaljt
     const fetchStockJt = async () => {
       try {
         const response = await fetch('https://analisis-sistemas.azurewebsites.net/api/stocktotaljt', {
@@ -79,7 +74,7 @@ const Administrador = () => {
     fetchStockJt();
   }, []);
   
-  useEffect(() => {
+  useEffect(() => {// Se ejecuta al inicio para obtener los datos de la API de la tabla totalstock2dbs
     const fetchStocktotal = async () => {
       try {
         const response = await fetch('https://analisis-sistemas.azurewebsites.net/api/totalstock2dbs', {
@@ -99,29 +94,29 @@ const Administrador = () => {
     fetchStocktotal();
   }, []);
 
-  const tablespage = () => {
+  const tablespage = () => {// Funcion para navegar a la pagina de listado de productos
     navigate('tables');
   };
 
-  const handleLogout = () => {
+  const handleLogout = () => {// Funcion para cerrar sesion
     localStorage.removeItem('user');
     navigate('/');
   };
 
-  const handleDropdown = () => {
+  const handleDropdown = () => {// Funcion para mostrar y ocultar el dropdown
     setShowLogout(!showLogout);
   }
  
-  const pageinicio = () => {
+  const pageinicio = () => {// Funcion para navegar a la pagina de inicio
     navigate('/admin');
     };
-    const movimiento = () => {
+    const movimiento = () => {// Funcion para navegar a la pagina de movimientos
       navigate('/admin/movimientos');
       };
   
    
 
-    useEffect(() => {
+    useEffect(() => {// Se ejecuta al inicio para obtener los datos de la API de la tabla totalstock2dbs y crear la grafica de pie
       const chartInstance = new Chart(canvasRef.current, {
         type: "pie",
         data: {
@@ -141,11 +136,7 @@ const Administrador = () => {
     }, [stockGt, stockJt]);
     
     
-   
-   
-
-    
-    useEffect(() => {
+    useEffect(() => {// Se ejecuta al inicio para obtener los datos de la API de la tabla movimientosgt y crear la grafica de lineas
       const intervalId = setInterval(() => {
         const fetchMovimientosTotalGt = async () => {
           try {
@@ -178,9 +169,8 @@ const Administrador = () => {
       }, [movimientosTotal, labels1, values]);
     
   
-  
      
-      useEffect(() => {
+      useEffect(() => {// Se ejecuta al inicio para obtener los datos de la API de la tabla movimientosjt y crear la grafica de lineas
         const intervalId = setInterval(() => {
         const fetchMovimientosTotalJt = async () => {
           try {
@@ -213,11 +203,7 @@ const Administrador = () => {
       }, [movimientosTotal2, labels2, values2]);
 
     
-  /*  const actualizarMovimientos = (movimiento) => {
-      setMovimientos([...movimientos, movimiento]);
-    };*/
-    
-    const eliminacion = () => {
+    const eliminacion = () => {// Funcion para navegar a la pagina de bitacora de eliminacion
       navigate('/admin/bitacora');
       };
 
@@ -232,16 +218,12 @@ const Administrador = () => {
             <div className="sidebar-brand-text mx-3"> Inventario - SCRUM<sup>2</sup></div>
           </a>
 
-          
-
           <li className="nav-item active">
             <a className="nav-link" href=" " onClick={pageinicio}>
               <FontAwesomeIcon icon={faTachometerAlt} style={{color: "#ffffff",}} />
               <span style={{marginLeft:"10px"}}>Pantalla de inicio</span>
             </a>
           </li>
-
-       
 
           <div className="sidebar-heading">
             Existencia:
@@ -272,14 +254,12 @@ const Administrador = () => {
             </a>
           </li>
 
-         
-
           <div className="text-center d-none d-md-inline">
             <button className="rounded-circle border-0" id="sidebarToggle" onClick={handleToggleSidebar}>
             <FontAwesomeIcon icon={faCircleDot} size ="2x" style={{color: "#ffffff",marginTop: "2px",marginLeft:"-1.5px"}} />
             </button>
           </div>
-  </ul>
+     </ul>
 
   <div id="content-wrapper" className="d-flex flex-column">
     <div id="content">
@@ -393,53 +373,46 @@ const Administrador = () => {
          
 
           <div style={{ width: '75%', marginTop:"-25%"}}>
-      <h2 style={{ fontSize: '20px' }}>Gráfica Guatemala</h2>
-      <ResponsiveContainer width="100%" height={200}>
-        <LineChart
-          data={values}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" tick={{ stroke: 'black', strokeWidth: 0.5 }} />
-          <YAxis stroke='black' strokeWidth={0.5} />
-          <Tooltip />
-          <Line type="monotone" dataKey="uv" stroke="#1E90FF" strokeWidth={2} />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
+              <h2 style={{ fontSize: '20px' }}>Gráfica Guatemala</h2>
+              <ResponsiveContainer width="100%" height={200}>
+                <LineChart
+                  data={values}
+                  margin={{
+                    top: 10,
+                    right: 30,
+                    left: 0,
+                    bottom: 0,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" tick={{ stroke: 'black', strokeWidth: 0.5 }} />
+                  <YAxis stroke='black' strokeWidth={0.5} />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="uv" stroke="#1E90FF" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+          </div>
     
-    <div style={{ width: '75%', marginTop:"-5.5%" }}>
-      <h2 style={{ fontSize: '20px' }}>Gráfica Jutiapa</h2>
-      <ResponsiveContainer width="100%" height={200}>
-        <LineChart
-          data={values2}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" tick={{ stroke: 'black', strokeWidth: 0.5 }} />
-          <YAxis stroke='black' strokeWidth={0.5} />
-          <Tooltip />
-          <Line type="monotone" dataKey="uv" stroke="red" strokeWidth={2} />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
-
-
-        
-              
-
-         
-
+          <div style={{ width: '75%', marginTop:"-5.5%" }}>
+            <h2 style={{ fontSize: '20px' }}>Gráfica Jutiapa</h2>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart
+                data={values2}
+                margin={{
+                  top: 10,
+                  right: 30,
+                  left: 0,
+                  bottom: 0,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" tick={{ stroke: 'black', strokeWidth: 0.5 }} />
+                <YAxis stroke='black' strokeWidth={0.5} />
+                <Tooltip />
+                <Line type="monotone" dataKey="uv" stroke="red" strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 
@@ -455,7 +428,6 @@ const Administrador = () => {
 </div>
     </>
   );
-
 }
 
 export default Administrador;

@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
 
-const Operador = () => {
+const Operador = () => { //se crea la funcion Operador  
   const navigate = useNavigate();
   const [showLogout, setShowLogout] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,34 +20,32 @@ const Operador = () => {
   const [products2, setProducts2] = useState([]);
   
  
-  const handleLogout = () => {
+  const handleLogout = () => {//funcion para cerrar sesion
     localStorage.removeItem('user');
     navigate('/');
   }
   
-  const handleToggleSidebar = () => {
+  const handleToggleSidebar = () => {//funcion para mostrar el sidebar
     const sidebar = document.querySelector(".mySidebar");
     sidebar.classList.toggle("toggled");
   };
   
 
-  const handleDropdown = () => {
+  const handleDropdown = () => {//funcion para mostrar el dropdown
     setShowLogout(!showLogout);
   }
-  const filteredProducts = products.filter(product => {
+  const filteredProducts = products.filter(product => {//funcion para filtrar los productos de guatemala
     const nombre = product.nombbre ? product.nombbre.toLowerCase() : '';
     return nombre.includes(searchTerm.toLowerCase());
   });
   
-  const filteredProducts2 = products2.filter(products2 => {
+  const filteredProducts2 = products2.filter(products2 => {//funcion para filtrar los productos de jutiapa
     const nombre = products2.nombre ? products2.nombre.toLowerCase() : '';
     return nombre.includes(searchTerm.toLowerCase());
   });
 
 
-  
-
-  const convertByteArrayToBase64 = (byteArray) => {
+  const convertByteArrayToBase64 = (byteArray) => {//funcion para convertir la imagen a base64
     const bytes = new Uint8Array(byteArray);
     let binary = '';
     for (let i = 0; i < bytes.length; i++) {
@@ -56,9 +54,7 @@ const Operador = () => {
     return btoa(binary);
   };
   
-
-
-useEffect(() => {
+useEffect(() => { //funcion para obtener los productos de guatemala y jutiapa
   fetch("https://analisis-sistemas.azurewebsites.net/api/getproducts")
     .then((response) => response.json())
     .then((data) => {
@@ -85,14 +81,14 @@ useEffect(() => {
     });
 }, []);
 
-  const getProductoGT = async (id) => {
+  const getProductoGT = async (id) => {//funcion para obtener los productos de guatemala por id
     const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/gt/${id}`);
     const data = await response.json();
     return data;
   };
 
 
-  const MovimientoStock = async (id) => {
+  const MovimientoStock = async (id) => {//funcion para realizar el movimiento de stock de guatemala
     try {
       const data1 = await getProductoGT(id);
   
@@ -165,14 +161,14 @@ useEffect(() => {
     }
   };
 
-  const getProductoJt = async (id) => {
+  const getProductoJt = async (id) => {//funcion para obtener los productos de jutiapa por id
     const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/jt/${id}`);
     const data = await response.json();
     return data;
   };
 
 
-  const MovimientoStockJt = async (id) => {
+  const MovimientoStockJt = async (id) => { //funcion para realizar el movimiento de stock de jutiapa
     try {
       const data1 = await getProductoJt(id);
 
@@ -246,7 +242,7 @@ useEffect(() => {
 
 
  
-  const enviarProductoGt = async (id) => {
+  const enviarProductoGt = async (id) => {//funcion para enviar los productos a cliente de guatemala
 
     const data1 = await getProductoGT(id);
 
@@ -297,7 +293,7 @@ useEffect(() => {
 
       } else {
         const errorData = await response.json();
-        // Aquí puedes hacer algo con el objeto `errorData` que contiene información detallada sobre el error
+       
         console.error('Error:', errorData);
   
         Swal.fire({
@@ -324,7 +320,7 @@ useEffect(() => {
   };
 
   
-    const enviarProductoJt = async (id) => {
+    const enviarProductoJt = async (id) => {//funcion para enviar los productos a cliente de jutiapa
 
       const data1 = await getProductoJt(id);
 
@@ -373,7 +369,7 @@ useEffect(() => {
 
         } else {
           const errorData = await response.json();
-          // Aquí puedes hacer algo con el objeto `errorData` que contiene información detallada sobre el error
+          
           console.error('Error:', errorData);
     
           Swal.fire({
@@ -413,9 +409,6 @@ useEffect(() => {
           </a>
 
           <hr className="sidebar-divider my-0" />
-
-          
-
           <hr className="sidebar-divider" />
 
           <div className="sidebar-headingop">
@@ -436,7 +429,7 @@ useEffect(() => {
             <FontAwesomeIcon icon={faCircleDot} size ="2x" style={{color: "#ffffff",marginTop: "2px",marginLeft:"-1.5px"}} />
             </button>
           </div>
-  </ul>
+      </ul>
 
   <div id="content-wrapper" className="d-flex flex-column">
     <div id="content">
@@ -516,45 +509,45 @@ useEffect(() => {
                                         <FontAwesomeIcon icon={faPaperPlane}  style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
                                             Enviar Cliente
                                         </button>
-        </div>
-      ))}
-      {filteredProducts2.map(products2 => (
-        <div className="cards" key={products2.id}>
-          
-              <img className='imgcard'
-                src={`data:image/png;base64,${products2.image}`}
-                alt={products2.nombre}
-                key={products2.id}
-                onError={() => console.log("Error al cargar la imagen")}
-              />
-          <h2>Producto : {products2.nombre}</h2>
-          <p>Precio : Q {products2.precio}.00</p>
-          <p>
-            {products2.stock <= products2.stock_minimo ? (
-              <p style={{ color: 'red' }}>Stock Disponible: {products2.stock}</p>
-            ) : (
-              <p>Stock Disponible: {products2.stock}</p>
-            )}
-          </p>
-          <p>Almacén : {products2.id_ubicacion === 2 ? "Guatemala" : "Jutiapa"}</p>
-          <button className="updatestock" onClick={() => MovimientoStockJt(products2.id_producto)}>Enviar stock</button>
-          <button className='buttonstockoperador' onClick={() => enviarProductoJt(products2.id_producto)}>
-                                        <FontAwesomeIcon icon={faPaperPlane}  style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
-                                            Enviar Cliente
-                                        </button>
-        </div>
-      ))}
-    </div>
-                </div>
+                                  </div>
+                                ))}
+                                {filteredProducts2.map(products2 => (
+                                  <div className="cards" key={products2.id}>
+                                    
+                                        <img className='imgcard'
+                                          src={`data:image/png;base64,${products2.image}`}
+                                          alt={products2.nombre}
+                                          key={products2.id}
+                                          onError={() => console.log("Error al cargar la imagen")}
+                                        />
+                                    <h2>Producto : {products2.nombre}</h2>
+                                    <p>Precio : Q {products2.precio}.00</p>
+                                    <p>
+                                      {products2.stock <= products2.stock_minimo ? (
+                                        <p style={{ color: 'red' }}>Stock Disponible: {products2.stock}</p>
+                                      ) : (
+                                        <p>Stock Disponible: {products2.stock}</p>
+                                      )}
+                                    </p>
+                                    <p>Almacén : {products2.id_ubicacion === 2 ? "Guatemala" : "Jutiapa"}</p>
+                                    <button className="updatestock" onClick={() => MovimientoStockJt(products2.id_producto)}>Enviar stock</button>
+                                    <button className='buttonstockoperador' onClick={() => enviarProductoJt(products2.id_producto)}>
+                                                                  <FontAwesomeIcon icon={faPaperPlane}  style={{"--fa-primary-color": "#ffffff", "--fa-secondary-color": "#ffffff"}} />
+                                                                      Enviar Cliente
+                                                                  </button>
+                                  </div>
+                                ))}
+                          </div>
+                      </div>
+                 </div>
+          <footer className="sticky-footer bg-white">
+            <div className="container my-auto">
+              <div className="copyright text-center my-auto">
+                <span>Derechos Reservados © Mgodoyd 2023</span>
               </div>
-      <footer className="sticky-footer bg-white">
-        <div className="container my-auto">
-          <div className="copyright text-center my-auto">
-            <span>Derechos Reservados © Mgodoyd 2023</span>
-          </div>
-        </div>
-      </footer>
-    </div>
+            </div>
+          </footer>
+      </div>
   </div>
 
     </>

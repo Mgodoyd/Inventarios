@@ -21,7 +21,7 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import * as XLSX from 'xlsx';
 import {faFileExcel} from '@fortawesome/free-solid-svg-icons';
 
-const Productslist = () => {
+const Productslist = () => {//funcion para listar productos en la pagina web 
     const [showLogout, setShowLogout] = useState(false);
     const [products, setProducts] = useState([]);
     const [products2, setProducts2] = useState([]);
@@ -29,7 +29,7 @@ const Productslist = () => {
     const [searchTerm, setSearchTerm] = useState("");
     
     
-    const convertByteArrayToBase64 = (byteArray) => {
+    const convertByteArrayToBase64 = (byteArray) => {//funcion para convertir imagen a base64
       const bytes = new Uint8Array(byteArray);
       let binary = '';
       for (let i = 0; i < bytes.length; i++) {
@@ -39,7 +39,7 @@ const Productslist = () => {
     };
     
     
-    useEffect(() => {
+    useEffect(() => {//funcion para obtener productos de la base de datos
       fetch("https://analisis-sistemas.azurewebsites.net/api/getproducts")
         .then((response) => response.json())
         .then((data) => {
@@ -68,7 +68,7 @@ const Productslist = () => {
     }, []);
     
     
-    const eliminarProductoGT = (id) => {
+    const eliminarProductoGT = (id) => {//funcion para eliminar producto gt
       const producto = products.find(product => product.id_producto === id);
 
 
@@ -120,7 +120,7 @@ const Productslist = () => {
     };
     
     
-    const eliminarProductoJT = (id) => {
+    const eliminarProductoJT = (id) => {//funcion para eliminar producto jt
       const producto = products2.find(product => product.id_producto === id);
 
 
@@ -177,17 +177,17 @@ const Productslist = () => {
     
     
     
-    const filteredProducts = products.filter(product => {
+    const filteredProducts = products.filter(product => {//funcion para filtrar productos gt
       const nombre = product.nombbre ? product.nombbre.toLowerCase() : '';
       return nombre.includes(searchTerm.toLowerCase());
     });
     
-    const filteredProducts2 = products2.filter(products2 => {
+    const filteredProducts2 = products2.filter(products2 => {//funcion para filtrar productos jt
       const nombre = products2.nombre ? products2.nombre.toLowerCase() : '';
       return nombre.includes(searchTerm.toLowerCase());
     });
     
-    const getProductoJt = async (id) => {
+    const getProductoJt = async (id) => {//funcion para obtener producto jt
       const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/jt/${id}`);
       const data = await response.json();
       return data;
@@ -196,7 +196,7 @@ const Productslist = () => {
 
 
 
-    const actualizarProductoJt = async (id) => {
+    const actualizarProductoJt = async (id) => {//funcion para actualizar producto jt
       try {
         const data = await getProductoJt(id);
     
@@ -346,7 +346,7 @@ const Productslist = () => {
 
 
     
-    const getProductoGT = async (id) => {
+    const getProductoGT = async (id) => {//funcion para obtener producto gt
       const response = await fetch(`https://analisis-sistemas.azurewebsites.net/api/gt/${id}`);
       const data = await response.json();
       return data;
@@ -354,7 +354,7 @@ const Productslist = () => {
 
 
 
-    const actualizarProducto = async (id) => {
+    const actualizarProducto = async (id) => {//funcion para actualizar producto gt
       try {
         const data1 = await getProductoGT(id);
     
@@ -506,7 +506,7 @@ const Productslist = () => {
 
 
      
-    const MovimientoStockJt = async (id) => {
+    const MovimientoStockJt = async (id) => {//funcion para enviar producto jt
       try {
         const data1 = await getProductoJt(id);
   
@@ -580,7 +580,7 @@ const Productslist = () => {
 
 
  
-    const MovimientoStock = async (id) => {
+    const MovimientoStock = async (id) => {//funcion para enviar producto gt
       try {
         const data1 = await getProductoGT(id);
     
@@ -658,7 +658,7 @@ const Productslist = () => {
 
 
 
-    const insertProducts = async () => {
+    const insertProducts = async () => {//funcion para insertar productos en la base de datos 
       try {
         const { value: formValues } = await Swal.fire({
           title: 'Insertar Producto',
@@ -858,7 +858,7 @@ const Productslist = () => {
     
  
 
-    const enviarProductoGt = async (id) => {
+    const enviarProductoGt = async (id) => {//funcion para enviar producto gt
 
       const data1 = await getProductoGT(id);
   
@@ -938,7 +938,7 @@ const Productslist = () => {
 
 
     
-    const enviarProductoJt = async (id) => {
+    const enviarProductoJt = async (id) => {//funcion para enviar producto jt
 
       const data1 = await getProductoJt(id);
 
@@ -1014,7 +1014,7 @@ const Productslist = () => {
     };
     
 
-    const generarReporteGt = async () => {
+    const generarReporteGt = async () => {//funcion para generar reporte de productos gt
       try {
         // Obtiene los datos de tu base de datos
         const response = await fetch('https://analisis-sistemas.azurewebsites.net/api/getproductsgt', {
@@ -1074,7 +1074,7 @@ const Productslist = () => {
     };
     
 
-    const generarReporteJt = async () => {
+    const generarReporteJt = async () => { //funcion para generar reporte de productos jt
       try {
         // Obtiene los datos de tu base de datos
         const response = await fetch('https://analisis-sistemas.azurewebsites.net/api/getproductsjt', {
@@ -1134,38 +1134,32 @@ const Productslist = () => {
     };
     
     
-    
-    
-    
-
-
-    
-    const handleToggleSidebar = () => {
+    const handleToggleSidebar = () => {//funcion para mostrar el sidebar
       const sidebar = document.querySelector(".mySidebar");
       sidebar.classList.toggle("toggled");
     };
   
-    const tablespage = () => {
+    const tablespage = () => {//navegacion a la pagina de listado de productos
       navigate('/admin/tables');
     };
   
-    const handleLogout = () => {
+    const handleLogout = () => {//funcion para cerrar sesion
       localStorage.removeItem('user');
       navigate('/');
     };
   
-    const handleDropdown = () => {
+    const handleDropdown = () => {//funcion para mostrar el dropdown de cerrar sesion
       setShowLogout(!showLogout);
     }
-    const pageinicio = () => {
+    const pageinicio = () => {//navegacion a la pagina de inicio
         navigate('/admin');
         };
 
-    const movimiento = () => {
+    const movimiento = () => {//navegacion a la pagina de movimientos
         navigate('/admin/movimientos');
         };
 
-    const eliminacion = () => {
+    const eliminacion = () => {//navegacion a la pagina de eliminacion
         navigate('/admin/bitacora');
         };
    
@@ -1180,16 +1174,12 @@ const Productslist = () => {
             <div className="sidebar-brand-text mx-3">   Inventario - SCRUM<sup>2</sup></div>
           </a>
 
-          
-
           <li className="nav-item active">
             <a className="nav-link" href=" " onClick={pageinicio}>
               <FontAwesomeIcon icon={faTachometerAlt} style={{color: "#ffffff",}} />
               <span style={{marginLeft:"10px"}}>Pantalla de inicio</span>
             </a>
           </li>
-
-         
 
           <div className="sidebar-heading">
             Existencia:
@@ -1227,7 +1217,7 @@ const Productslist = () => {
             <FontAwesomeIcon icon={faCircleDot} size ="2x" style={{color: "#ffffff",marginTop: "2px",marginLeft:"-1.5px"}} />
             </button>
           </div>
-  </ul>
+       </ul>
 
   <div id="content-wrapper" className="d-flex flex-column">
     <div id="content">
@@ -1280,14 +1270,9 @@ const Productslist = () => {
                         Ingresar Producto
                       </button>
                  <Form>
-                 
-
-
                  <Form.Group id="form-search" className="mb-3" controlId="formBasicEmail">
                   <Form.Control type="text" placeholder="Search..." value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} />
                 </Form.Group>
-
-
                     </Form>
                   </div>
                   <div className="card-body">

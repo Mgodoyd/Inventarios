@@ -3,6 +3,7 @@ import Image from "../ViewImage/Images";
 import Login from "../Login/Login";
 import { Row, Col } from "react-bootstrap";
 
+//Dividimos la pantalla en dos partes, una para la imagen y otra para el formulario del login
 const View = () => {
     return (
         <div className="App">
