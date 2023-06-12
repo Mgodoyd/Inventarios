@@ -1,4 +1,4 @@
-## Front-end Proyecto Analisis Sistemas I
+## Proyecto Analisis Sistemas I
 Este repositorio contiene  un proyecto del curso Análisis de Sistemas I desarrollado en React.
 ### Instrucciones para ejecutar el proyecto
 
