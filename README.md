@@ -23,3 +23,6 @@ npm start
 El servidor de desarrollo se ejecutará en http://localhost:3000/ y la aplicación se recargará automáticamente cada vez que realices cambios en los archivos fuente.
 
 6. Abre tu navegador web y navega a http://localhost:3000/ para ver la aplicación en funcionamiento.
+
+### Azure Funtions utilizadas en este Proyecto 
+Este proyecto de React.js consume una API para gestionar los Productos. Puedes encontrar el repositorio de la API [aquí](https://github.com/Mgodoyd/ApiInventarioAzureFunctions.git). Asegúrate de seguir las instrucciones proporcionadas en ese repositorio para configurar y ejecutar las Azure Functions correctamente antes de ejecutar este proyecto de React.
